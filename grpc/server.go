@@ -9,6 +9,11 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
+var (
+	// DefaultServer 默认server
+	DefaultServer *Server
+)
+
 // Server 服务端
 type Server struct {
 	address   string
@@ -59,4 +64,15 @@ func (s *Server) GetSrv() *grpc.Server {
 // Close 关闭
 func (s *Server) Close() {
 	s.rpcServer.Stop()
+}
+
+// Start 启动Grpc
+func Start(address string, tls bool, certFile, keyFile string) {
+	DefaultServer = NewServer(address, tls, certFile, keyFile)
+	DefaultServer.Start()
+}
+
+// Close 关闭Grpc
+func Close() {
+	DefaultServer.Close()
 }
