@@ -12,7 +12,7 @@ import (
 var (
 	log *logrus.Logger
 	// Level 日志等级
-	Level = "debug"
+	Level = "debug" // panic/fatal/error/warn/info/debug
 )
 
 // Init 初始化
