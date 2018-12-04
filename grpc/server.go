@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	// DefaultServer 默认server
-	DefaultServer *Server
+	// defaultServer 默认server
+	defaultServer *Server
 )
 
 // Server 服务端
@@ -68,11 +68,16 @@ func (s *Server) Close() {
 
 // Start 启动Grpc
 func Start(address string, tls bool, certFile, keyFile string) {
-	DefaultServer = NewServer(address, tls, certFile, keyFile)
-	DefaultServer.Start()
+	defaultServer = NewServer(address, tls, certFile, keyFile)
+	defaultServer.Start()
+}
+
+// GetSrv 获取rpc server
+func GetSrv() *grpc.Server {
+	return defaultServer.GetSrv()
 }
 
 // Close 关闭Grpc
 func Close() {
-	DefaultServer.Close()
+	defaultServer.Close()
 }
