@@ -63,23 +63,22 @@ func NewClientTLS(serverAddress string, tls bool, certFile, serverNameOverride s
 
 // CustomCredential 自定义凭证
 type CustomCredential struct {
-	AppID  string
-	AppKey string
+	AppKey, AppSecret string
 }
 
 // NewCustomCredential 创建自定义凭证
-func NewCustomCredential(appID, appKey string) *CustomCredential {
+func NewCustomCredential(appKey, appSecret string) *CustomCredential {
 	return &CustomCredential{
-		AppID:  appID,
-		AppKey: appKey,
+		AppKey:    appKey,
+		AppSecret: appSecret,
 	}
 }
 
 // GetRequestMetadata Get请求元数据
 func (c CustomCredential) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
 	return map[string]string{
-		"app_id":  c.AppID,
-		"app_key": c.AppKey,
+		"app_key":    c.AppKey,
+		"app_secret": c.AppSecret,
 	}, nil
 }
 
