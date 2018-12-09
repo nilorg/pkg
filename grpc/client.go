@@ -1,6 +1,8 @@
 package grpc
 
 import (
+	"context"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
@@ -8,7 +10,11 @@ import (
 
 // Client grpc客户端
 type Client struct {
-	conn *grpc.ClientConn // 连接
+	conn               *grpc.ClientConn // 连接
+	serverAddress      string
+	tls                bool
+	certFile           string
+	serverNameOverride string
 }
 
 // GetConn 获取客户端连接
@@ -17,7 +23,22 @@ func (c *Client) GetConn() *grpc.ClientConn {
 }
 
 // NewClient 创建grpc客户端
-func NewClient(serverAddress string, tls bool, certFile, serverNameOverride string) *Client {
+func NewClient(serverAddress string) *Client {
+	conn, err := grpc.Dial(serverAddress, grpc.WithInsecure())
+	if err != nil {
+		grpclog.Fatalln(err)
+	}
+	return &Client{
+		conn:               conn,
+		serverAddress:      serverAddress,
+		tls:                false,
+		certFile:           "",
+		serverNameOverride: "",
+	}
+}
+
+// NewClientTLS 创建grpc客户端TLS
+func NewClientTLS(serverAddress string, tls bool, certFile, serverNameOverride string) *Client {
 	var conn *grpc.ClientConn
 	var err error
 	if tls {
@@ -35,7 +56,56 @@ func NewClient(serverAddress string, tls bool, certFile, serverNameOverride stri
 		grpclog.Fatalf("did not connect: %v", err)
 	}
 	return &Client{
-		conn: conn,
+		conn:               conn,
+		serverAddress:      serverAddress,
+		tls:                tls,
+		certFile:           certFile,
+		serverNameOverride: serverNameOverride,
+	}
+}
+
+// CustomCredential 自定义凭证
+type CustomCredential struct {
+	AppID  string
+	AppKey string
+}
+
+// NewCustomCredential 创建自定义凭证
+func NewCustomCredential(appID, appKey string) *CustomCredential {
+	return &CustomCredential{
+		AppID:  appID,
+		AppKey: appKey,
+	}
+}
+
+// GetRequestMetadata Get请求元数据
+func (c CustomCredential) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+	return map[string]string{
+		"app_id":  c.AppID,
+		"app_key": c.AppKey,
+	}, nil
+}
+
+// RequireTransportSecurity 是否安全传输
+func (c CustomCredential) RequireTransportSecurity() bool {
+	return false
+}
+
+// GetCustomAuthenticationParameter 获取自定义参数
+type GetCustomAuthenticationParameter func() (appID, appKey string)
+
+// NewClientCustomAuthentication 创建grpc客户端自定义服务验证
+func NewClientCustomAuthentication(serverAddress string, credential credentials.PerRPCCredentials) *Client {
+	conn, err := grpc.Dial(serverAddress, grpc.WithPerRPCCredentials(credential))
+	if err != nil {
+		grpclog.Fatalln(err)
+	}
+	return &Client{
+		conn:               conn,
+		serverAddress:      serverAddress,
+		tls:                false,
+		certFile:           "",
+		serverNameOverride: "",
 	}
 }
 
