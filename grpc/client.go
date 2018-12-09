@@ -41,17 +41,14 @@ func NewClient(serverAddress string) *Client {
 func NewClientTLS(serverAddress string, tls bool, certFile, serverNameOverride string) *Client {
 	var conn *grpc.ClientConn
 	var err error
-	if tls {
-		// TLS连接
-		var creds credentials.TransportCredentials
-		creds, err = credentials.NewClientTLSFromFile(certFile, serverNameOverride)
-		if err != nil {
-			grpclog.Fatalf("Failed to create TLS credentials %v", err)
-		}
-		conn, err = grpc.Dial(serverAddress, grpc.WithTransportCredentials(creds))
-	} else {
-		conn, err = grpc.Dial(serverAddress, grpc.WithInsecure())
+	// TLS连接
+	var creds credentials.TransportCredentials
+	creds, err = credentials.NewClientTLSFromFile(certFile, serverNameOverride)
+	if err != nil {
+		grpclog.Fatalf("Failed to create TLS credentials %v", err)
 	}
+	conn, err = grpc.Dial(serverAddress, grpc.WithTransportCredentials(creds))
+
 	if err != nil {
 		grpclog.Fatalf("did not connect: %v", err)
 	}
@@ -96,7 +93,11 @@ type GetCustomAuthenticationParameter func() (appID, appKey string)
 
 // NewClientCustomAuthentication 创建grpc客户端自定义服务验证
 func NewClientCustomAuthentication(serverAddress string, credential credentials.PerRPCCredentials) *Client {
-	conn, err := grpc.Dial(serverAddress, grpc.WithPerRPCCredentials(credential))
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithInsecure())
+	// 使用自定义认证
+	opts = append(opts, grpc.WithPerRPCCredentials(credential))
+	conn, err := grpc.Dial(serverAddress, opts...)
 	if err != nil {
 		grpclog.Fatalln(err)
 	}
