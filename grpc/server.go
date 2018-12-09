@@ -20,7 +20,7 @@ var (
 
 // Server 服务端
 type Server struct {
-	address string
+	address   string
 	tls       bool
 	certFile  string
 	keyFile   string
@@ -61,7 +61,7 @@ func NewServerTLS(address string, tls bool, certFile, keyFile string) *Server {
 }
 
 // ValidationFunc 验证方法
-type ValidationFunc func(appID, appKey string) bool
+type ValidationFunc func(appKey, appSecret string) bool
 
 // NewServerCustomAuthentication 创建服务端自定义服务验证
 func NewServerCustomAuthentication(address string, validation ValidationFunc) *Server {
@@ -72,17 +72,16 @@ func NewServerCustomAuthentication(address string, validation ValidationFunc) *S
 			return nil, grpc.Errorf(codes.Unauthenticated, "无令牌认证信息")
 		}
 		var (
-			appID  string
-			appKey string
+			appKey, appSecret string
 		)
 
-		if v, ok := md["app_id"]; ok {
-			appID = v[0]
-		}
 		if v, ok := md["app_key"]; ok {
 			appKey = v[0]
 		}
-		if !validation(appID, appKey) {
+		if v, ok := md["app_secret"]; ok {
+			appSecret = v[0]
+		}
+		if !validation(appKey, appSecret) {
 			return nil, grpc.Errorf(codes.Unauthenticated, "无效的认证信息")
 		}
 		return handler(ctx, req)
