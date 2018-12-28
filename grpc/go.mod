@@ -1,6 +1,6 @@
 module github.com/nilorg/pkg/grpc
 
 require (
-	github.com/pkg/errors v0.8.0
+	golang.org/x/sys v0.0.0-20181205085412-a5c9d58dba9a // indirect
 	google.golang.org/grpc v1.16.0
 )

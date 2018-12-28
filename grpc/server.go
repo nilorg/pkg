@@ -1,7 +1,11 @@
 package grpc
 
 import (
+	"context"
 	"net"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -17,27 +21,77 @@ var (
 // Server 服务端
 type Server struct {
 	address   string
+	tls       bool
+	certFile  string
+	keyFile   string
 	rpcServer *grpc.Server
 }
 
 // NewServer 创建服务端
-func NewServer(address string, tls bool, certFile, keyFile string) *Server {
+func NewServer(address string) *Server {
 	var rpcServer *grpc.Server
-	if tls {
-		// TLS认证
-		creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
-		if err != nil {
-			grpclog.Fatalf("Failed to generate credentials %v", err)
-		}
-		// 实例化grpc Server, 并开启TLS认证
-		rpcServer = grpc.NewServer(grpc.Creds(creds))
-	} else {
-		rpcServer = grpc.NewServer()
+	rpcServer = grpc.NewServer()
+	return &Server{
+		rpcServer: rpcServer,
+		address:   address,
+		tls:       false,
+		certFile:  "",
+		keyFile:   "",
 	}
+}
+
+// NewServerTLS 创建服务端TLS
+func NewServerTLS(address string, tls bool, certFile, keyFile string) *Server {
+
+	// TLS认证
+	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
+	if err != nil {
+		grpclog.Fatalf("Failed to generate credentials %v", err)
+	}
+	// 实例化grpc Server, 并开启TLS认证
+	rpcServer := grpc.NewServer(grpc.Creds(creds))
 
 	return &Server{
 		rpcServer: rpcServer,
 		address:   address,
+		tls:       tls,
+		certFile:  certFile,
+		keyFile:   keyFile,
+	}
+}
+
+// ValidationFunc 验证方法
+type ValidationFunc func(appKey, appSecret string) bool
+
+// NewServerCustomAuthentication 创建服务端自定义服务验证
+func NewServerCustomAuthentication(address string, validation ValidationFunc) *Server {
+	rpcServer := grpc.NewServer(grpc.UnaryInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			return nil, grpc.Errorf(codes.Unauthenticated, "无令牌认证信息")
+		}
+		var (
+			appKey, appSecret string
+		)
+
+		if v, ok := md["app_key"]; ok {
+			appKey = v[0]
+		}
+		if v, ok := md["app_secret"]; ok {
+			appSecret = v[0]
+		}
+		if !validation(appKey, appSecret) {
+			return nil, grpc.Errorf(codes.Unauthenticated, "无效的认证信息")
+		}
+		return handler(ctx, req)
+	}))
+	return &Server{
+		rpcServer: rpcServer,
+		address:   address,
+		tls:       false,
+		certFile:  "",
+		keyFile:   "",
 	}
 }
 
@@ -67,8 +121,8 @@ func (s *Server) Close() {
 }
 
 // Start 启动Grpc
-func Start(address string, tls bool, certFile, keyFile string) {
-	defaultServer = NewServer(address, tls, certFile, keyFile)
+func Start(address string) {
+	defaultServer = NewServer(address)
 	defaultServer.Start()
 }
 
