@@ -23,6 +23,12 @@ func (ctx *WebContext) RenderPage(data gin.H) {
 	ctx.HTML(http.StatusOK, tmplName, data)
 }
 
+// RenderSinglePage 渲染单页面
+func (ctx *WebContext) RenderSinglePage(data gin.H) {
+	tmplName := fmt.Sprintf("singles_%s.tmpl", ctx.pageName)
+	ctx.HTML(http.StatusOK, tmplName, data)
+}
+
 // WebControllerFunc Web控制器函数
 func WebControllerFunc(ctlFunc func(ctx *WebContext), pageName string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
