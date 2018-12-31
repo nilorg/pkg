@@ -64,6 +64,15 @@ func loadTemplates(templatesDir string) multitemplate.Render {
 			r.AddFromFiles(tmplName, files...)
 		}
 	}
+	// 加载单页面
+	singles, err := filepath.Glob(filepath.Join(templatesDir, themeName, "singles/*.tmpl"))
+	if err != nil {
+		panic(err)
+	}
+	for _, singlePage := range singles {
+		tmplName := fmt.Sprintf("singles_%s", filepath.Base(singlePage))
+		r.AddFromFiles(tmplName, singlePage)
+	}
 	return r
 }
 ```
