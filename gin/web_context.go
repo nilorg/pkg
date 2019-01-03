@@ -24,10 +24,12 @@ func (ctx *WebContext) RenderPage(data gin.H) {
 		layout = "pjax_layout.tmpl"
 	}
 	tmplName := fmt.Sprintf("%s_pages_%s", layout, ctx.pageName)
-	if data != nil {
+	if data == nil {
 		data = gin.H{
 			CurrentAccount: ctx.GetCurrentAccount(),
 		}
+	} else {
+		data[CurrentAccount] = ctx.GetCurrentAccount()
 	}
 	ctx.HTML(http.StatusOK, tmplName, data)
 }
@@ -35,10 +37,12 @@ func (ctx *WebContext) RenderPage(data gin.H) {
 // RenderSinglePage 渲染单页面
 func (ctx *WebContext) RenderSinglePage(data gin.H) {
 	tmplName := fmt.Sprintf("singles_%s.tmpl", ctx.pageName)
-	if data != nil {
+	if data == nil {
 		data = gin.H{
 			CurrentAccount: ctx.GetCurrentAccount(),
 		}
+	} else {
+		data[CurrentAccount] = ctx.GetCurrentAccount()
 	}
 	ctx.HTML(http.StatusOK, tmplName, data)
 }
