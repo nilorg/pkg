@@ -11,16 +11,23 @@ type WebAPIContext struct {
 }
 
 // SetCurrentAccount 设置当前账户
-func (ctx *WebAPIContext) SetCurrentAccount(data interface{}) {
+func (ctx *WebAPIContext) SetCurrentAccount(data interface{}) error {
 	session := sessions.Default(ctx.Context)
-	session.Set(currentAccount, data)
-	session.Save()
+	session.Set(CurrentAccount, data)
+	return session.Save()
 }
 
 // GetCurrentAccount 设置当前账户
 func (ctx *WebAPIContext) GetCurrentAccount() interface{} {
 	session := sessions.Default(ctx.Context)
-	return session.Get(currentAccount)
+	return session.Get(CurrentAccount)
+}
+
+// DelCurrentAccount 删除当前账户
+func (ctx *WebAPIContext) DelCurrentAccount() error {
+	session := sessions.Default(ctx.Context)
+	session.Delete(CurrentAccount)
+	return session.Save()
 }
 
 // WebAPIControllerFunc WebAPI控制器函数
