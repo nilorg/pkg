@@ -1,8 +1,11 @@
 package gin
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/nilorg/sdk/errors"
 )
 
 // WebAPIContext Web上下文
@@ -28,6 +31,19 @@ func (ctx *WebAPIContext) DelCurrentAccount() error {
 	session := sessions.Default(ctx.Context)
 	session.Delete(CurrentAccount)
 	return session.Save()
+}
+
+// ResultError 返回错误
+func (ctx *WebAPIContext) ResultError(err error) {
+	if berr, ok := err.(errors.BusinessError); ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": berr,
+		})
+	} else {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": errors.New(0, err.Error()),
+		})
+	}
 }
 
 // WebAPIControllerFunc WebAPI控制器函数
