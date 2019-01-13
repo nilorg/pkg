@@ -87,10 +87,10 @@ func newClient(serverAddress string, creds credentials.TransportCredentials, cre
 		opts = append(opts, grpc.WithInsecure())
 	} else {
 		if creds != nil {
-			opts = append(opts, grpc.WithInsecure())
 			opts = append(opts, grpc.WithTransportCredentials(creds))
 		}
 		if credential != nil {
+			opts = append(opts, grpc.WithInsecure())
 			// 使用自定义认证
 			opts = append(opts, grpc.WithPerRPCCredentials(credential))
 		}
