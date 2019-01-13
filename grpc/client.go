@@ -10,11 +10,9 @@ import (
 
 // Client grpc客户端
 type Client struct {
-	conn               *grpc.ClientConn // 连接
-	serverAddress      string
-	tls                bool
-	certFile           string
-	serverNameOverride string
+	conn          *grpc.ClientConn // 连接
+	serverAddress string
+	tls           bool
 }
 
 // GetConn 获取客户端连接
@@ -24,53 +22,36 @@ func (c *Client) GetConn() *grpc.ClientConn {
 
 // NewClient 创建grpc客户端
 func NewClient(serverAddress string) *Client {
-	conn, err := grpc.Dial(serverAddress, grpc.WithInsecure())
-	if err != nil {
-		grpclog.Fatalln(err)
-	}
-	return &Client{
-		conn:               conn,
-		serverAddress:      serverAddress,
-		tls:                false,
-		certFile:           "",
-		serverNameOverride: "",
-	}
+	return newClient(serverAddress, nil, nil)
 }
 
-// NewClientTLS 创建grpc客户端TLS
-func NewClientTLS(serverAddress string, tls bool, certFile, serverNameOverride string) *Client {
-	var conn *grpc.ClientConn
-	var err error
+// NewClientTLSFromFile 创建grpc客户端TLSFromFile
+func NewClientTLSFromFile(serverAddress string, certFile, serverNameOverride string) *Client {
 	// TLS连接
-	var creds credentials.TransportCredentials
-	creds, err = credentials.NewClientTLSFromFile(certFile, serverNameOverride)
+	creds, err := credentials.NewClientTLSFromFile(certFile, serverNameOverride)
 	if err != nil {
 		grpclog.Fatalf("Failed to create TLS credentials %v", err)
 	}
-	conn, err = grpc.Dial(serverAddress, grpc.WithTransportCredentials(creds))
+	return NewClientTLS(serverAddress, creds)
+}
 
-	if err != nil {
-		grpclog.Fatalf("did not connect: %v", err)
-	}
-	return &Client{
-		conn:               conn,
-		serverAddress:      serverAddress,
-		tls:                tls,
-		certFile:           certFile,
-		serverNameOverride: serverNameOverride,
-	}
+// NewClientTLS 创建grpc客户端
+func NewClientTLS(serverAddress string, creds credentials.TransportCredentials) *Client {
+	return newClient(serverAddress, creds, nil)
 }
 
 // CustomCredential 自定义凭证
 type CustomCredential struct {
 	AppKey, AppSecret string
+	Security          bool
 }
 
 // NewCustomCredential 创建自定义凭证
-func NewCustomCredential(appKey, appSecret string) *CustomCredential {
+func NewCustomCredential(appKey, appSecret string, tls bool) *CustomCredential {
 	return &CustomCredential{
 		AppKey:    appKey,
 		AppSecret: appSecret,
+		Security:  tls,
 	}
 }
 
@@ -84,7 +65,7 @@ func (c CustomCredential) GetRequestMetadata(ctx context.Context, uri ...string)
 
 // RequireTransportSecurity 是否安全传输
 func (c CustomCredential) RequireTransportSecurity() bool {
-	return false
+	return c.Security
 }
 
 // GetCustomAuthenticationParameter 获取自定义参数
@@ -92,20 +73,35 @@ type GetCustomAuthenticationParameter func() (appID, appKey string)
 
 // NewClientCustomAuthentication 创建grpc客户端自定义服务验证
 func NewClientCustomAuthentication(serverAddress string, credential credentials.PerRPCCredentials) *Client {
+	return newClient(serverAddress, nil, credential)
+}
+
+// NewClientTLSCustomAuthentication 创建grpc客户端TLS自定义服务验证
+func NewClientTLSCustomAuthentication(serverAddress string, creds credentials.TransportCredentials, credential credentials.PerRPCCredentials) *Client {
+	return newClient(serverAddress, creds, credential)
+}
+
+func newClient(serverAddress string, creds credentials.TransportCredentials, credential credentials.PerRPCCredentials) *Client {
 	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithInsecure())
-	// 使用自定义认证
-	opts = append(opts, grpc.WithPerRPCCredentials(credential))
+	if creds == nil && credential == nil {
+		opts = append(opts, grpc.WithInsecure())
+	} else {
+		if creds != nil {
+			opts = append(opts, grpc.WithTransportCredentials(creds))
+		}
+		if credential != nil {
+			// 使用自定义认证
+			opts = append(opts, grpc.WithPerRPCCredentials(credential))
+		}
+	}
 	conn, err := grpc.Dial(serverAddress, opts...)
 	if err != nil {
 		grpclog.Fatalln(err)
 	}
 	return &Client{
-		conn:               conn,
-		serverAddress:      serverAddress,
-		tls:                false,
-		certFile:           "",
-		serverNameOverride: "",
+		conn:          conn,
+		serverAddress: serverAddress,
+		tls:           creds != nil,
 	}
 }
 
