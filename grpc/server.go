@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"crypto/tls"
 	"net"
 
 	"google.golang.org/grpc/codes"
@@ -37,13 +38,13 @@ func NewServerTLSFromFile(address string, certFile, keyFile string) *Server {
 	if err != nil {
 		grpclog.Fatalf("Failed to generate credentials %v", err)
 	}
-	return NewServerTLS(address, creds)
+	return newServer(address, creds, nil)
 }
 
 // NewServerTLS 创建服务端TLS
-func NewServerTLS(address string, creds credentials.TransportCredentials) *Server {
+func NewServerTLS(address string, cert *tls.Certificate) *Server {
 	// 实例化grpc Server, 并开启TLS认证
-	return newServer(address, creds, nil)
+	return newServer(address, credentials.NewServerTLSFromCert(cert), nil)
 }
 
 // ValidationFunc 验证方法
