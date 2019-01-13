@@ -22,42 +22,28 @@ var (
 type Server struct {
 	address   string
 	tls       bool
-	certFile  string
-	keyFile   string
 	rpcServer *grpc.Server
 }
 
 // NewServer 创建服务端
 func NewServer(address string) *Server {
-	var rpcServer *grpc.Server
-	rpcServer = grpc.NewServer()
-	return &Server{
-		rpcServer: rpcServer,
-		address:   address,
-		tls:       false,
-		certFile:  "",
-		keyFile:   "",
-	}
+	return newServer(address, nil, nil)
 }
 
-// NewServerTLS 创建服务端TLS
-func NewServerTLS(address string, tls bool, certFile, keyFile string) *Server {
-
+// NewServerTLSFromFile 创建服务端TLSFromFile
+func NewServerTLSFromFile(address string, certFile, keyFile string) *Server {
 	// TLS认证
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 	if err != nil {
 		grpclog.Fatalf("Failed to generate credentials %v", err)
 	}
-	// 实例化grpc Server, 并开启TLS认证
-	rpcServer := grpc.NewServer(grpc.Creds(creds))
+	return NewServerTLS(address, creds)
+}
 
-	return &Server{
-		rpcServer: rpcServer,
-		address:   address,
-		tls:       tls,
-		certFile:  certFile,
-		keyFile:   keyFile,
-	}
+// NewServerTLS 创建服务端TLS
+func NewServerTLS(address string, creds credentials.TransportCredentials) *Server {
+	// 实例化grpc Server, 并开启TLS认证
+	return newServer(address, creds, nil)
 }
 
 // ValidationFunc 验证方法
@@ -65,33 +51,48 @@ type ValidationFunc func(appKey, appSecret string) bool
 
 // NewServerCustomAuthentication 创建服务端自定义服务验证
 func NewServerCustomAuthentication(address string, validation ValidationFunc) *Server {
-	rpcServer := grpc.NewServer(grpc.UnaryInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+	return newServer(address, nil, validation)
+}
 
-		md, ok := metadata.FromIncomingContext(ctx)
-		if !ok {
-			return nil, grpc.Errorf(codes.Unauthenticated, "无令牌认证信息")
-		}
-		var (
-			appKey, appSecret string
-		)
+// NewServerTLSCustomAuthentication 创建服务端TLS自定义服务验证
+func NewServerTLSCustomAuthentication(address string, creds credentials.TransportCredentials, validation ValidationFunc) *Server {
+	return newServer(address, creds, validation)
+}
 
-		if v, ok := md["app_key"]; ok {
-			appKey = v[0]
-		}
-		if v, ok := md["app_secret"]; ok {
-			appSecret = v[0]
-		}
-		if !validation(appKey, appSecret) {
-			return nil, grpc.Errorf(codes.Unauthenticated, "无效的认证信息")
-		}
-		return handler(ctx, req)
-	}))
+// newServer 创建 grpc server
+func newServer(address string, creds credentials.TransportCredentials, validation ValidationFunc) *Server {
+	var opts []grpc.ServerOption
+	if creds != nil {
+		opts = append(opts, grpc.Creds(creds))
+	}
+	if validation != nil {
+		unaryInterceptor := grpc.UnaryInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+			md, ok := metadata.FromIncomingContext(ctx)
+			if !ok {
+				return nil, grpc.Errorf(codes.Unauthenticated, "无令牌认证信息")
+			}
+			var (
+				appKey, appSecret string
+			)
+
+			if v, ok := md["app_key"]; ok {
+				appKey = v[0]
+			}
+			if v, ok := md["app_secret"]; ok {
+				appSecret = v[0]
+			}
+			if !validation(appKey, appSecret) {
+				return nil, grpc.Errorf(codes.Unauthenticated, "无效的认证信息")
+			}
+			return handler(ctx, req)
+		})
+		opts = append(opts, unaryInterceptor)
+	}
+	rpcServer := grpc.NewServer(opts...)
 	return &Server{
 		rpcServer: rpcServer,
 		address:   address,
-		tls:       false,
-		certFile:  "",
-		keyFile:   "",
+		tls:       creds != nil,
 	}
 }
 
