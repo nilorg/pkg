@@ -78,8 +78,8 @@ func NewClientCustomAuthentication(serverAddress string, credential credentials.
 }
 
 // NewClientTLSCustomAuthentication 创建grpc客户端TLS自定义服务验证
-func NewClientTLSCustomAuthentication(serverAddress string, creds credentials.TransportCredentials, credential credentials.PerRPCCredentials) *Client {
-	return newClient(serverAddress, creds, credential)
+func NewClientTLSCustomAuthentication(serverAddress string, cp *x509.CertPool, serverNameOverride string, credential credentials.PerRPCCredentials) *Client {
+	return newClient(serverAddress, credentials.NewClientTLSFromCert(cp, serverNameOverride), credential)
 }
 
 func newClient(serverAddress string, creds credentials.TransportCredentials, credential credentials.PerRPCCredentials) *Client {
