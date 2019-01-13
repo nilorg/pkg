@@ -56,8 +56,8 @@ func NewServerCustomAuthentication(address string, validation ValidationFunc) *S
 }
 
 // NewServerTLSCustomAuthentication 创建服务端TLS自定义服务验证
-func NewServerTLSCustomAuthentication(address string, creds credentials.TransportCredentials, validation ValidationFunc) *Server {
-	return newServer(address, creds, validation)
+func NewServerTLSCustomAuthentication(address string, cert *tls.Certificate, validation ValidationFunc) *Server {
+	return newServer(address, credentials.NewServerTLSFromCert(cert), validation)
 }
 
 // newServer 创建 grpc server
