@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"crypto/x509"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -32,12 +33,12 @@ func NewClientTLSFromFile(serverAddress string, certFile, serverNameOverride str
 	if err != nil {
 		grpclog.Fatalf("Failed to create TLS credentials %v", err)
 	}
-	return NewClientTLS(serverAddress, creds)
+	return newClient(serverAddress, creds, nil)
 }
 
 // NewClientTLS 创建grpc客户端
-func NewClientTLS(serverAddress string, creds credentials.TransportCredentials) *Client {
-	return newClient(serverAddress, creds, nil)
+func NewClientTLS(serverAddress string, cp *x509.CertPool, serverNameOverride string) *Client {
+	return newClient(serverAddress, credentials.NewClientTLSFromCert(cp, serverNameOverride), nil)
 }
 
 // CustomCredential 自定义凭证
