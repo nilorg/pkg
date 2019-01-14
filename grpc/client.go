@@ -98,7 +98,7 @@ func newClient(serverAddress string, creds credentials.TransportCredentials, cre
 	}
 	conn, err := grpc.Dial(serverAddress, opts...)
 	if err != nil {
-		grpclog.Fatalln(err)
+		grpclog.Errorln(err)
 	}
 	return &Client{
 		conn:          conn,
