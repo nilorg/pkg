@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/evalphobia/logrus_sentry"
-	raven "github.com/getsentry/raven-go"
+	"github.com/getsentry/raven-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -111,4 +111,9 @@ func SetHookSentry(client *raven.Client) error {
 	}
 	log.Hooks.Add(hook)
 	return nil
+}
+
+// Default 默认logger
+func Default() *logrus.Logger {
+	return log
 }
