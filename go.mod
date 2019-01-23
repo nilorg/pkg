@@ -6,7 +6,7 @@ require (
 	github.com/getsentry/raven-go v0.2.0
 	github.com/gin-contrib/sessions v0.0.0-20190101140330-dc5246754963
 	github.com/gin-gonic/gin v1.3.0
-	github.com/nilorg/sdk v0.0.0-20190107091411-80f777c24347
+	github.com/nilorg/sdk v0.0.0-20190116130924-5cba00a81130
 	github.com/pkg/errors v0.8.0 // indirect
 	github.com/sirupsen/logrus v1.2.0
 )
