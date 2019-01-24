@@ -1,14 +1,12 @@
 package db
 
 import (
-	"github.com/bwmarrin/snowflake"
 	"github.com/jinzhu/gorm"
 	"github.com/nilorg/pkg/logger"
 )
 
 // DataBaseConfig ...
 type DataBaseConfig struct {
-	SnowflakeNode int64
 	DBType        string
 	MasterAddress string
 	LogFlag       bool
@@ -17,19 +15,13 @@ type DataBaseConfig struct {
 	SlaveAddress  []string
 }
 type DataBase struct {
-	master        *gorm.DB
-	slaves        []*gorm.DB
-	slaveIndex    int
-	snowflakeNode *snowflake.Node
+	master     *gorm.DB
+	slaves     []*gorm.DB
+	slaveIndex int
 }
 
 // NewDataBase ...
 func NewDataBase(conf DataBaseConfig) *DataBase {
-	node, err := snowflake.NewNode(conf.SnowflakeNode)
-	if err != nil {
-		logger.Fatalf("NewDataBase snowflake:%v", err)
-	}
-
 	master := newGorm(conf.DBType, conf.MasterAddress, conf.LogFlag, conf.MaxOpen, conf.MaxIdle)
 
 	var slaves []*gorm.DB
@@ -42,10 +34,9 @@ func NewDataBase(conf DataBaseConfig) *DataBase {
 		}
 	}
 	return &DataBase{
-		snowflakeNode: node,
-		master:        master,
-		slaves:        slaves,
-		slaveIndex:    0,
+		master:     master,
+		slaves:     slaves,
+		slaveIndex: 0,
 	}
 }
 
@@ -105,9 +96,4 @@ func (db *DataBase) Slave() *gorm.DB {
 		}
 		return slave
 	}
-}
-
-// NewSnowflakeID 雪花ID
-func (db *DataBase) NewSnowflakeID() snowflake.ID {
-	return db.snowflakeNode.Generate()
 }
