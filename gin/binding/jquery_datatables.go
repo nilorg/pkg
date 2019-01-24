@@ -103,7 +103,7 @@ func dataTablesParametersParseMap(values url.Values) *model.JQueryDataTablesPara
 		Columns: columns,
 		Order:   orders,
 		Draw:    convert.ToInt(baseValues["draw"]),
-		Start:   convert.ToInt64(baseValues["start"]),
-		Length:  convert.ToInt64(baseValues["length"]),
+		Start:   convert.ToInt(baseValues["start"]),
+		Length:  convert.ToInt(baseValues["length"]),
 	}
 }
