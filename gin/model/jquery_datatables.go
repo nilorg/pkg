@@ -13,8 +13,8 @@ type JQueryDataTableResult struct {
 // JQueryDataTablesParameters ...
 type JQueryDataTablesParameters struct {
 	Draw    int                       // 请求次数计数器
-	Start   int64                     // 第一条数据的起始位置
-	Length  int64                     // 每页显示的数据条数
+	Start   int                       // 第一条数据的起始位置
+	Length  int                       // 每页显示的数据条数
 	Columns []JQueryDataTablesColumns // 数据列
 	Order   []JQueryDataTablesOrder   // 排序
 	Search  JQueryDataTablesSearch    // 搜索
