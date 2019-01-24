@@ -4,7 +4,6 @@ import "testing"
 
 func TestDataBase(t *testing.T) {
 	conf := DataBaseConfig{
-		SnowflakeNode: 1,
 		DBType:        "postgres",
 		MasterAddress: "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=test sslmode=disable",
 		LogFlag:       true,
