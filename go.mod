@@ -12,7 +12,7 @@ require (
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v0.0.0-20181116074157-8ec929ed50c3 // indirect
 	github.com/lib/pq v1.0.0 // indirect
-	github.com/nilorg/sdk v0.0.0-20190116130924-5cba00a81130
+	github.com/nilorg/sdk v0.0.0-20190130084846-76476c6b8292
 	github.com/pkg/errors v0.8.0 // indirect
 	github.com/sirupsen/logrus v1.2.0
 )
