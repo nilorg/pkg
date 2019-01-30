@@ -1,6 +1,10 @@
 package db
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/nilorg/pkg/logger"
+)
 
 func TestDataBase(t *testing.T) {
 	conf := DataBaseConfig{
@@ -15,7 +19,8 @@ func TestDataBase(t *testing.T) {
 			"host=127.0.0.4 port=5432 user=postgres password=postgres dbname=test sslmode=disable",
 		},
 	}
-	db := NewDataBase(conf)
+	logger.Init()
+	db := NewDataBase(conf, logger.Default())
 	db.Master()
 	db.Slave()
 }

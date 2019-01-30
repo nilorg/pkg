@@ -1,8 +1,10 @@
 package db
 
 import (
+	"log"
+
 	"github.com/jinzhu/gorm"
-	"github.com/nilorg/pkg/logger"
+	nlog "github.com/nilorg/sdk/log"
 )
 
 // DataBaseConfig ...
@@ -18,10 +20,11 @@ type DataBase struct {
 	master     *gorm.DB
 	slaves     []*gorm.DB
 	slaveIndex int
+	log        nlog.Logger
 }
 
 // NewDataBase ...
-func NewDataBase(conf DataBaseConfig) *DataBase {
+func NewDataBase(conf DataBaseConfig, log nlog.Logger) *DataBase {
 	master := newGorm(conf.DBType, conf.MasterAddress, conf.LogFlag, conf.MaxOpen, conf.MaxIdle)
 
 	var slaves []*gorm.DB
@@ -37,6 +40,7 @@ func NewDataBase(conf DataBaseConfig) *DataBase {
 		master:     master,
 		slaves:     slaves,
 		slaveIndex: 0,
+		log:        log,
 	}
 }
 
@@ -45,11 +49,11 @@ func newGorm(dbType, address string, logFlag bool, maxOpen, maxIdle int) *gorm.D
 
 	db, err := gorm.Open(dbType, address)
 	if err != nil {
-		logger.Fatalf("初始化 %s 连接失败: %s ", dbType, err)
+		log.Fatalf("初始化 %s 连接失败: %s ", dbType, err)
 	}
 	err = db.DB().Ping()
 	if err != nil {
-		logger.Fatalf("Ping %s 连接失败: %s ", dbType, err)
+		log.Fatalf("Ping %s 连接失败: %s ", dbType, err)
 	}
 	db.LogMode(logFlag)
 
@@ -58,18 +62,18 @@ func newGorm(dbType, address string, logFlag bool, maxOpen, maxIdle int) *gorm.D
 	return db
 }
 
-// Open 打开
+// Close 关闭
 func (db *DataBase) Close() {
 	err := db.master.Close()
 	if err != nil {
-		logger.Errorln(err)
+		db.log.Errorln(err)
 	}
 
 	slaveLen := len(db.slaves)
 	for i := 0; i < slaveLen; i++ {
 		err = db.slaves[i].Close()
 		if err != nil {
-			logger.Errorln(err)
+			db.log.Errorln(err)
 		}
 	}
 }
