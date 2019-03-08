@@ -35,7 +35,7 @@ func (ctx *WebAPIContext) DelCurrentAccount() error {
 
 // ResultError 返回错误
 func (ctx *WebAPIContext) ResultError(err error) {
-	if berr, ok := err.(errors.BusinessError); ok {
+	if berr, ok := err.(*errors.BusinessError); ok {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": berr,
 		})
