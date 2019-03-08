@@ -16,6 +16,8 @@ type DataBaseConfig struct {
 	MaxIdle       int
 	SlaveAddress  []string
 }
+
+// DataBase ...
 type DataBase struct {
 	master     *gorm.DB
 	slaves     []*gorm.DB
