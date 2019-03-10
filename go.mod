@@ -14,9 +14,9 @@ require (
 	github.com/jinzhu/now v0.0.0-20181116074157-8ec929ed50c3 // indirect
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
+	github.com/nilorg/pkg/gin v0.0.0-20190310120503-8fc75eccdc77 // indirect
 	github.com/nilorg/sdk v0.0.0-20190304074330-5e3e33b4ae9f
 	github.com/pkg/errors v0.8.0 // indirect
 	github.com/sirupsen/logrus v1.2.0
-	golang.org/x/sys v0.0.0-20181228144115-9a3f9b0469bb // indirect
 	google.golang.org/appengine v1.4.0 // indirect
 )

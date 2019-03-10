@@ -59,7 +59,7 @@ func (tmpl *EngineTemplate) Watching() error {
 				loadFlag = false
 			}
 			if loadFlag {
-				tmpl.LoadTemplate()
+				tmpl.htmlRender = tmpl.LoadTemplate()
 			}
 		}
 	}()
