@@ -6,7 +6,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-contrib/multitemplate"
-	"github.com/gin-gonic/gin/render"
+	"github.com/gin-gonic/gin"
 )
 
 // LoadTemplateFunc 加载模板函数类
@@ -15,21 +15,21 @@ type LoadTemplateFunc func(templatesDir string) multitemplate.Render
 // EngineTemplate gin引擎模板
 type EngineTemplate struct {
 	templatesDir     string
-	htmlRender       render.HTMLRender
+	engine           *gin.Engine
 	watcher          *fsnotify.Watcher
 	Errors           <-chan error
 	loadTemplateFunc LoadTemplateFunc
 }
 
 // NewEngineTemplate 创建一个gin引擎模板
-func NewEngineTemplate(templateDir string, htmlRender render.HTMLRender, tmplFunc LoadTemplateFunc) (*EngineTemplate, error) {
+func NewEngineTemplate(templateDir string, engine *gin.Engine, tmplFunc LoadTemplateFunc) (*EngineTemplate, error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
 	}
 	return &EngineTemplate{
 		templatesDir:     templateDir,
-		htmlRender:       htmlRender,
+		engine:           engine,
 		loadTemplateFunc: tmplFunc,
 		watcher:          watcher,
 		Errors:           make(<-chan error),
@@ -59,7 +59,7 @@ func (tmpl *EngineTemplate) Watching() error {
 				loadFlag = false
 			}
 			if loadFlag {
-				tmpl.htmlRender = tmpl.LoadTemplate()
+				tmpl.engine.HTMLRender = tmpl.LoadTemplate()
 			}
 		}
 	}()
