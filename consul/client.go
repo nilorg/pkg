@@ -19,11 +19,11 @@ type Clienter interface {
 }
 
 // NewClient ...
-func NewClient(serverAddress, serviceName string) Clienter {
+func NewClient(serverAddress, serviceName string, tags ...string) Clienter {
 	return &Client{
 		ConsulServerAddress: serverAddress,
 		ServiceName:         serviceName,
-		Tags:                []string{},
+		Tags:                tags,
 	}
 }
 
