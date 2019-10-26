@@ -7,3 +7,5 @@ require (
 	github.com/gin-gonic/gin v1.3.0
 	github.com/nilorg/sdk v0.0.0-20190304074330-5e3e33b4ae9f
 )
+
+go 1.13
