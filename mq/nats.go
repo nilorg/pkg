@@ -3,6 +3,7 @@ package mq
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/nilorg/sdk/mq"
 
@@ -41,6 +42,24 @@ func (n *Nats) Subscribe(topic string, h mq.SubscribeHandler, queue ...string) (
 // NewNats ..
 func NewNats(url string) (*Nats, error) {
 	conn, err := nats.Connect(url)
+	if err != nil {
+		return nil, err
+	}
+	return &Nats{
+		conn: conn,
+	}, nil
+}
+
+// NewNatsOptions ..
+func NewNatsOptions(url string) (*Nats, error) {
+	opts := nats.Options{
+		AllowReconnect: true,
+		MaxReconnect:   5,
+		ReconnectWait:  5 * time.Second,
+		Timeout:        3 * time.Second,
+		Url:            url,
+	}
+	conn, err := opts.Connect()
 	if err != nil {
 		return nil, err
 	}
