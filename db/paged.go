@@ -23,8 +23,8 @@ func LimitOffset(page int, perPage *int) int {
 }
 
 // SelectPageData 查询翻页数据
-func SelectPageData(db *gorm.DB, outData interface{}, tableName, primaryKey string, page, perPage int, sqlCmd string, sqlValues ...interface{}) (total int64, err error) {
-	expression := db.Table(tableName).Select(primaryKey).Where(sqlCmd, sqlValues...)
+func SelectPageData(db *gorm.DB, outData interface{}, primaryKey string, page, perPage int, sqlCmd string, sqlValues ...interface{}) (total int64, err error) {
+	expression := db.Model(outData).Select(primaryKey).Where(sqlCmd, sqlValues...)
 	if verr := expression.Count(&total).Error; gorm.IsRecordNotFoundError(verr) {
 		return
 	} else if verr != nil {
@@ -41,7 +41,7 @@ func SelectPageData(db *gorm.DB, outData interface{}, tableName, primaryKey stri
 	//正例:先快速定位需要获取的 id 段，然后再关联:
 	//	SELECT a.* FROM 表 1 a, (select id from 表 1 where 条件 LIMIT 100000,20 ) b where a.id=b.id
 
-	err = db.Raw(fmt.Sprintf("SELECT a.* FROM %s a, ? b WHERE a.%s = b.%s", tableName, primaryKey, primaryKey), expression.SubQuery()).Find(outData).Error
+	err = db.Raw(fmt.Sprintf("SELECT a.* FROM `%s` a, ? b WHERE a.%s = b.%s", db.NewScope(outData).TableName(), primaryKey, primaryKey), expression.SubQuery()).Scan(outData).Error
 	//err = db.Joins(fmt.Sprintf("inner join ? as o on o.%s = %s.%s", primaryKey, tableName, primaryKey), expression.SubQuery()).Find(outData).Error
 	return
 }

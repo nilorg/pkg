@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CurrentAccount ...
+// SessionCurrentAccountKey ...
 const CurrentAccount = "current_account"
 
 // WebContext Web上下文
