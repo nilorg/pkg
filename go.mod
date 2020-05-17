@@ -6,9 +6,9 @@ require (
 	github.com/armon/go-metrics v0.0.0-20190430140413-ec5e00d3c878 // indirect
 	github.com/certifi/gocertifi v0.0.0-20190506164543-d2eda7129713 // indirect
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
+	github.com/deckarep/golang-set v1.7.1
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0
-	github.com/gin-gonic/gin v1.5.0 // indirect
 	github.com/golang/protobuf v1.3.2
 	github.com/hashicorp/consul/api v1.1.0
 	github.com/hashicorp/go-msgpack v0.5.5 // indirect
