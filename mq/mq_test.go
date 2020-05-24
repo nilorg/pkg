@@ -19,8 +19,9 @@ func TestNats(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	err = client.Subscribe("test", func(ctx context.Context, msg interface{}) {
-		log.Println(string(msg.([]byte)))
+	err = client.Subscribe("test", func(ctx context.Context, data []byte) error {
+		log.Println(string(data))
+		return nil
 	})
 	if err != nil {
 		t.Error(err)
