@@ -18,15 +18,17 @@ type MinioStorage struct {
 }
 
 // NewMinioStorage 创建minio存储
-func NewMinioStorage(minioClient *minio.Client, location string, bucketNames []string) (ms *MinioStorage, err error) {
+func NewMinioStorage(minioClient *minio.Client, location string, initBucket bool, bucketNames []string) (ms *MinioStorage, err error) {
 	ms = &MinioStorage{
 		location:    location,
 		bucketNames: bucketNames,
 		minioClient: minioClient,
 	}
-	err = ms.initBucket()
-	if err != nil {
-		ms = nil
+	if initBucket {
+		err = ms.initBucket()
+		if err != nil {
+			ms = nil
+		}
 	}
 	return
 }
