@@ -8,6 +8,7 @@ import (
 
 	"github.com/minio/minio-go/v6"
 	"github.com/nilorg/sdk/mime"
+	"github.com/nilorg/sdk/storage"
 )
 
 // MinioStorage minio存储
@@ -101,14 +102,19 @@ func (ds *MinioStorage) Upload(ctx context.Context, read io.Reader, parameters .
 		err = errors.New("unrecognized suffix")
 		return
 	}
-	_, err = ds.minioClient.PutObjectWithContext(ctx, bucketName, filename, read, -1, minio.PutObjectOptions{
+	options := minio.PutObjectOptions{
 		ContentType: contextType,
-	})
+	}
+	md, mdExist := storage.FromIncomingContext(ctx)
+	if mdExist {
+		options.UserMetadata = md
+	}
+	_, err = ds.minioClient.PutObjectWithContext(ctx, bucketName, filename, read, -1, options)
 	return
 }
 
 // Download 下载
-func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, parameters ...interface{}) (err error) {
+func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, parameters ...interface{}) (results interface{}, err error) {
 	var (
 		bucketName string
 		filename   string
@@ -123,6 +129,10 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, parameters
 		return
 	}
 	object, err = ds.minioClient.GetObjectWithContext(ctx, bucketName, filename, minio.GetObjectOptions{})
+	if err != nil {
+		return
+	}
+	results, err = object.Stat()
 	if err != nil {
 		return
 	}
