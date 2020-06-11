@@ -12,6 +12,11 @@ import (
 	"github.com/nilorg/sdk/storage"
 )
 
+var (
+	// ErrBucketNameNotIsNil 桶名称不能为空
+	ErrBucketNameNotIsNil = errors.New("BucketName not is nil")
+)
+
 // MinioStorage minio存储
 type MinioStorage struct {
 	location    string
@@ -36,13 +41,13 @@ func NewMinioStorage(minioClient *minio.Client, location string, initBucket bool
 }
 
 func (ds *MinioStorage) bucketName(parameters ...interface{}) (bucketName string, err error) {
-	if len(parameters) < 0 {
+	if len(parameters) < 1 {
 		err = errors.New("Please enter bucketName")
 		return
 	}
-	switch parameters[0].(type) {
+	switch parameters[1].(type) {
 	case string:
-		bucketName = parameters[0].(string)
+		bucketName = parameters[1].(string)
 	default:
 		err = errors.New("bucketName parameter type error")
 	}
@@ -50,13 +55,13 @@ func (ds *MinioStorage) bucketName(parameters ...interface{}) (bucketName string
 }
 
 func (ds *MinioStorage) filename(parameters ...interface{}) (filename string, err error) {
-	if len(parameters) < 1 {
+	if len(parameters) < 0 {
 		err = errors.New("Please enter filename")
 		return
 	}
-	switch parameters[1].(type) {
+	switch parameters[0].(type) {
 	case string:
-		filename = parameters[1].(string)
+		filename = parameters[0].(string)
 	default:
 		err = errors.New("filename parameter type error")
 	}
@@ -85,18 +90,13 @@ func (ds *MinioStorage) initBucket() (err error) {
 }
 
 // Upload 上传
-func (ds *MinioStorage) Upload(ctx context.Context, read io.Reader, parameters ...interface{}) (filename string, err error) {
-	var (
-		bucketName string
-	)
-	bucketName, err = ds.bucketName(parameters...)
-	if err != nil {
+func (ds *MinioStorage) Upload(ctx context.Context, read io.Reader, filename string) (fullName string, err error) {
+	bucketName, bucketNameOk := FromBucketNameContext(ctx)
+	if !bucketNameOk {
+		err = ErrBucketNameNotIsNil
 		return
 	}
-	filename, err = ds.filename(parameters...)
-	if err != nil {
-		return
-	}
+	fullName = filename
 	options := minio.PutObjectOptions{}
 	contextType, contextTypeExist := FromContentTypeContext(ctx)
 	if contextTypeExist {
@@ -119,18 +119,13 @@ func (ds *MinioStorage) Upload(ctx context.Context, read io.Reader, parameters .
 }
 
 // Download 下载
-func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, parameters ...interface{}) (results interface{}, err error) {
+func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename string) (results interface{}, err error) {
 	var (
-		bucketName string
-		filename   string
-		object     *minio.Object
+		object *minio.Object
 	)
-	bucketName, err = ds.bucketName(parameters...)
-	if err != nil {
-		return
-	}
-	filename, err = ds.filename(parameters...)
-	if err != nil {
+	bucketName, bucketNameOk := FromBucketNameContext(ctx)
+	if !bucketNameOk {
+		err = ErrBucketNameNotIsNil
 		return
 	}
 	object, err = ds.minioClient.GetObjectWithContext(ctx, bucketName, filename, minio.GetObjectOptions{})
