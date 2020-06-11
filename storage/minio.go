@@ -19,17 +19,19 @@ var (
 
 // MinioStorage minio存储
 type MinioStorage struct {
-	location    string
-	bucketNames []string
-	minioClient *minio.Client
+	location                    string
+	bucketNames                 []string
+	minioClient                 *minio.Client
+	CheckAndCreateBucketEnabled bool
 }
 
 // NewMinioStorage 创建minio存储
 func NewMinioStorage(minioClient *minio.Client, location string, initBucket bool, bucketNames []string) (ms *MinioStorage, err error) {
 	ms = &MinioStorage{
-		location:    location,
-		bucketNames: bucketNames,
-		minioClient: minioClient,
+		location:                    location,
+		bucketNames:                 bucketNames,
+		minioClient:                 minioClient,
+		CheckAndCreateBucketEnabled: true,
 	}
 	if initBucket {
 		err = ms.initBucket()
@@ -43,20 +45,29 @@ func NewMinioStorage(minioClient *minio.Client, location string, initBucket bool
 // initBucket 初始化桶
 func (ds *MinioStorage) initBucket() (err error) {
 	for _, bucketName := range ds.bucketNames {
-		var exists bool
-		// 检查存储桶是否已经存在。
-		exists, err = ds.minioClient.BucketExists(bucketName)
+		err = ds.CheckAndCreateBucket(bucketName)
 		if err != nil {
 			return
 		}
-		if exists {
-			continue
-		}
-		// 创建桶
-		err = ds.minioClient.MakeBucket(bucketName, ds.location)
-		if err != nil {
-			return
-		}
+	}
+	return
+}
+
+// CheckAndCreateBucket 检查并创建桶
+func (ds *MinioStorage) CheckAndCreateBucket(bucketName string) (err error) {
+	var exists bool
+	// 检查存储桶是否已经存在。
+	exists, err = ds.minioClient.BucketExists(bucketName)
+	if err != nil {
+		return
+	}
+	if exists {
+		return
+	}
+	// 创建桶
+	err = ds.minioClient.MakeBucket(bucketName, ds.location)
+	if err != nil {
+		return
 	}
 	return
 }
@@ -67,6 +78,12 @@ func (ds *MinioStorage) Upload(ctx context.Context, read io.Reader, filename str
 	if !bucketNameOk {
 		err = ErrBucketNameNotIsNil
 		return
+	}
+	if ds.CheckAndCreateBucketEnabled {
+		err = ds.CheckAndCreateBucket(bucketName)
+		if err != nil {
+			return
+		}
 	}
 	fullName = filename
 	options := minio.PutObjectOptions{}
