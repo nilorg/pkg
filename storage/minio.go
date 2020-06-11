@@ -141,14 +141,12 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 }
 
 // Remove 删除
-func (ds *MinioStorage) Remove(_ context.Context, fullPath string, parameters ...interface{}) (err error) {
-	var (
-		bucketName string
-	)
-	bucketName, err = ds.bucketName(parameters...)
-	if err != nil {
+func (ds *MinioStorage) Remove(ctx context.Context, filename string) (err error) {
+	bucketName, bucketNameOk := FromBucketNameContext(ctx)
+	if !bucketNameOk {
+		err = ErrBucketNameNotIsNil
 		return
 	}
-	err = ds.minioClient.RemoveObject(bucketName, fullPath)
+	err = ds.minioClient.RemoveObject(bucketName, filename)
 	return
 }
