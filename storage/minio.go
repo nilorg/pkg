@@ -40,34 +40,6 @@ func NewMinioStorage(minioClient *minio.Client, location string, initBucket bool
 	return
 }
 
-func (ds *MinioStorage) bucketName(parameters ...interface{}) (bucketName string, err error) {
-	if len(parameters) < 1 {
-		err = errors.New("Please enter bucketName")
-		return
-	}
-	switch parameters[1].(type) {
-	case string:
-		bucketName = parameters[1].(string)
-	default:
-		err = errors.New("bucketName parameter type error")
-	}
-	return
-}
-
-func (ds *MinioStorage) filename(parameters ...interface{}) (filename string, err error) {
-	if len(parameters) < 0 {
-		err = errors.New("Please enter filename")
-		return
-	}
-	switch parameters[0].(type) {
-	case string:
-		filename = parameters[0].(string)
-	default:
-		err = errors.New("filename parameter type error")
-	}
-	return
-}
-
 // initBucket 初始化桶
 func (ds *MinioStorage) initBucket() (err error) {
 	for _, bucketName := range ds.bucketNames {
