@@ -108,7 +108,7 @@ func (ds *MinioStorage) Upload(ctx context.Context, read io.Reader, filename str
 }
 
 // Download 下载
-func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename string) (results interface{}, err error) {
+func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename string) (info storage.DownloadFileInfoer, err error) {
 	var (
 		object *minio.Object
 	)
@@ -121,9 +121,21 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 	if err != nil {
 		return
 	}
-	results, err = object.Stat()
+	var objectInfo minio.ObjectInfo
+	objectInfo, err = object.Stat()
 	if err != nil {
 		return
+	}
+	md := storage.Metadata{
+		"Content-Type": objectInfo.ContentType,
+	}
+	for k, v := range objectInfo.UserMetadata {
+		md.Set(k, v)
+	}
+	info = &downloadFileInfo{
+		filename: filepath.Ext(filename),
+		size:     objectInfo.Size,
+		metadata: md,
 	}
 	_, err = io.Copy(dist, object)
 	return
@@ -138,4 +150,22 @@ func (ds *MinioStorage) Remove(ctx context.Context, filename string) (err error)
 	}
 	err = ds.minioClient.RemoveObject(bucketName, filename)
 	return
+}
+
+type downloadFileInfo struct {
+	size     int64
+	filename string
+	metadata storage.Metadata
+}
+
+func (dfi *downloadFileInfo) Size() int64 {
+	return dfi.size
+}
+
+func (dfi *downloadFileInfo) Filename() string {
+	return dfi.filename
+}
+
+func (dfi *downloadFileInfo) Metadata() storage.Metadata {
+	return dfi.metadata
 }
