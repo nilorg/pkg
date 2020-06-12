@@ -121,6 +121,7 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 	if err != nil {
 		return
 	}
+
 	var objectInfo minio.ObjectInfo
 	objectInfo, err = object.Stat()
 	if err != nil {
@@ -146,7 +147,16 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 		size:     objectInfo.Size,
 		metadata: md,
 	}
+
+	if downloadBefore, downloadBeforeExist := storage.FromDownloadBeforeContext(ctx); downloadBeforeExist {
+		downloadBefore(info)
+	}
+
 	_, err = io.Copy(dist, object)
+	if err != nil {
+		info = nil
+		return
+	}
 	return
 }
 
