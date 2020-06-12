@@ -132,8 +132,17 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 	for k, v := range objectInfo.UserMetadata {
 		md.Set(k, v)
 	}
+
+	var (
+		downloadFilename      string
+		downloadFilenameExist bool
+	)
+	if downloadFilename, downloadFilenameExist = storage.FromDownloadFilenameContext(ctx); !downloadFilenameExist {
+		downloadFilename = filepath.Base(filename)
+	}
+
 	info = &downloadFileInfo{
-		filename: filepath.Ext(filename),
+		filename: downloadFilename,
 		size:     objectInfo.Size,
 		metadata: md,
 	}
