@@ -121,6 +121,7 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 	if err != nil {
 		return
 	}
+	defer object.Close()
 
 	var objectInfo minio.ObjectInfo
 	objectInfo, err = object.Stat()
