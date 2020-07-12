@@ -14,7 +14,7 @@ require (
 	github.com/nats-io/nats-streaming-server v0.18.0 // indirect
 	github.com/nats-io/nats.go v1.10.0
 	github.com/nats-io/stan.go v0.7.0
-	github.com/nilorg/sdk v0.0.0-20200710112006-f7bdc3801fab
+	github.com/nilorg/sdk v0.0.0-20200712142122-57fb15a5c12e
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.6.0
