@@ -1,1 +1,0 @@
-# [GRPC Health Checking Protocol](https://github.com/grpc/grpc/blob/master/doc/health-checking.md)(GRPC健康检查协议)
