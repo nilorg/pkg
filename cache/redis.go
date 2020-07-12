@@ -101,6 +101,23 @@ func (r *RedisCache) remove(ctx context.Context, keys ...string) (err error) {
 	return
 }
 
+// RemoveMatchPrefix ...
+func (r *RedisCache) RemoveMatchPrefix(ctx context.Context, match string) (err error) {
+	match = r.formatKey(match)
+	return r.removeMatchPrefix(ctx, match)
+}
+
+func (r *RedisCache) removeMatchPrefix(ctx context.Context, match string) (err error) {
+	iter := r.redisClient.Scan(ctx, 0, match, 0).Iterator()
+	for iter.Next(ctx) {
+		err = r.redisClient.Del(ctx, iter.Val()).Err()
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
 func (r *RedisCache) formatKey(key string) string {
 	return r.Prefix + key
 }
