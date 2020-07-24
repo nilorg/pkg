@@ -66,9 +66,6 @@ func (ds *MinioStorage) CheckAndCreateBucket(bucketName string) (err error) {
 	}
 	// 创建桶
 	err = ds.minioClient.MakeBucket(bucketName, ds.location)
-	if err != nil {
-		return
-	}
 	return
 }
 
