@@ -22,16 +22,16 @@ type AliyunOssStorage struct {
 }
 
 // NewAliyunOssStorage 创建阿里云oss存储
-func NewAliyunOssStorage(ossClient *oss.Client, initBucket bool, bucketNames []string) (ms *AliyunOssStorage, err error) {
-	ms = &AliyunOssStorage{
+func NewAliyunOssStorage(ossClient *oss.Client, initBucket bool, bucketNames []string) (os *AliyunOssStorage, err error) {
+	os = &AliyunOssStorage{
 		bucketNames:                 bucketNames,
 		ossClient:                   ossClient,
 		CheckAndCreateBucketEnabled: true,
 	}
 	if initBucket {
-		err = ms.initBucket()
+		err = os.initBucket()
 		if err != nil {
-			ms = nil
+			os = nil
 		}
 	}
 	return
@@ -76,6 +76,9 @@ func (ds *AliyunOssStorage) Upload(ctx context.Context, read io.Reader, filename
 		if err != nil {
 			return
 		}
+	}
+	if rename, ok := storage.FromRenameContext(ctx); ok {
+		filename = rename(filename)
 	}
 	fullName = filename
 

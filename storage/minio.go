@@ -82,6 +82,9 @@ func (ds *MinioStorage) Upload(ctx context.Context, read io.Reader, filename str
 			return
 		}
 	}
+	if rename, ok := storage.FromRenameContext(ctx); ok {
+		filename = rename(filename)
+	}
 	fullName = filename
 	options := minio.PutObjectOptions{}
 	contextType, contextTypeExist := FromContentTypeContext(ctx)
