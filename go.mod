@@ -25,4 +25,5 @@ require (
 	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
 	go.uber.org/atomic v1.6.0 // indirect
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
+	gorm.io/gorm v1.20.0
 )
