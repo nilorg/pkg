@@ -10,8 +10,8 @@ require (
 	github.com/deckarep/golang-set v1.7.1
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0
-	github.com/go-redis/redis/v8 v8.0.0-beta.7
-	github.com/jinzhu/gorm v1.9.15
+	github.com/go-redis/redis/v8 v8.0.0-beta.9
+	github.com/jinzhu/gorm v1.9.16
 	github.com/minio/minio-go/v6 v6.0.57
 	github.com/nats-io/nats-streaming-server v0.18.0 // indirect
 	github.com/nats-io/nats.go v1.10.0

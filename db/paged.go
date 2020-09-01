@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	gormV1 "github.com/jinzhu/gorm"
 )
 
 var (
@@ -23,9 +23,9 @@ func LimitOffset(page int, perPage *int) int {
 }
 
 // SelectPageData 查询翻页数据
-func SelectPageData(db *gorm.DB, outData interface{}, primaryKey string, page, perPage int, sqlCmd string, sqlValues ...interface{}) (total int64, err error) {
+func SelectPageData(db *gormV1.DB, outData interface{}, primaryKey string, page, perPage int, sqlCmd string, sqlValues ...interface{}) (total int64, err error) {
 	expression := db.Model(outData).Select(primaryKey).Where(sqlCmd, sqlValues...)
-	if verr := expression.Count(&total).Error; gorm.IsRecordNotFoundError(verr) {
+	if verr := expression.Count(&total).Error; gormV1.IsRecordNotFoundError(verr) {
 		return
 	} else if verr != nil {
 		err = verr

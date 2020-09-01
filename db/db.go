@@ -3,7 +3,7 @@ package db
 import (
 	"log"
 
-	"github.com/jinzhu/gorm"
+	gormV1 "github.com/jinzhu/gorm"
 	nlog "github.com/nilorg/sdk/log"
 )
 
@@ -19,8 +19,8 @@ type DataBaseConfig struct {
 
 // DataBase ...
 type DataBase struct {
-	master     *gorm.DB
-	slaves     []*gorm.DB
+	master     *gormV1.DB
+	slaves     []*gormV1.DB
 	slaveIndex int
 	log        nlog.Logger
 }
@@ -29,7 +29,7 @@ type DataBase struct {
 func NewDataBase(conf DataBaseConfig, log nlog.Logger) *DataBase {
 	master := newGorm(conf.DBType, conf.MasterAddress, conf.LogFlag, conf.MaxOpen, conf.MaxIdle)
 
-	var slaves []*gorm.DB
+	var slaves []*gormV1.DB
 	slaveAddressLen := len(conf.SlaveAddress)
 	if slaveAddressLen == 0 {
 		slaves = append(slaves, master)
@@ -47,9 +47,9 @@ func NewDataBase(conf DataBaseConfig, log nlog.Logger) *DataBase {
 }
 
 // newGorm 创建...
-func newGorm(dbType, address string, logFlag bool, maxOpen, maxIdle int) *gorm.DB {
+func newGorm(dbType, address string, logFlag bool, maxOpen, maxIdle int) *gormV1.DB {
 
-	db, err := gorm.Open(dbType, address)
+	db, err := gormV1.Open(dbType, address)
 	if err != nil {
 		log.Fatalf("初始化 %s 连接失败: %s ", dbType, err)
 	}
@@ -81,12 +81,12 @@ func (db *DataBase) Close() {
 }
 
 // Master 主
-func (db *DataBase) Master() *gorm.DB {
+func (db *DataBase) Master() *gormV1.DB {
 	return db.master
 }
 
 // Slave 从
-func (db *DataBase) Slave() *gorm.DB {
+func (db *DataBase) Slave() *gormV1.DB {
 	slaveLen := len(db.slaves)
 	if slaveLen == 0 {
 		return db.Master()

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/jinzhu/gorm"
+	gormV1 "github.com/jinzhu/gorm"
 )
 
 var (
@@ -15,8 +15,8 @@ var (
 type gormKey struct{}
 
 // FromContext 从上下文中获取Gorm
-func FromContext(ctx context.Context) (*gorm.DB, error) {
-	c, ok := ctx.Value(gormKey{}).(*gorm.DB)
+func FromContext(ctx context.Context) (*gormV1.DB, error) {
+	c, ok := ctx.Value(gormKey{}).(*gormV1.DB)
 	if !ok {
 		return nil, ErrContextNotFoundGorm
 	}
@@ -24,6 +24,6 @@ func FromContext(ctx context.Context) (*gorm.DB, error) {
 }
 
 // NewContext 创建Gorm上下文
-func NewContext(ctx context.Context, gdb *gorm.DB) context.Context {
+func NewContext(ctx context.Context, gdb *gormV1.DB) context.Context {
 	return context.WithValue(ctx, gormKey{}, gdb)
 }
