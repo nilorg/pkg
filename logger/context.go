@@ -11,7 +11,7 @@ import (
 
 // WithGinContext ...
 func WithGinContext(ctx *gin.Context) context.Context {
-	parent := context.Background()
+	parent := ctx.Request.Context()
 	if traceID := ctx.GetString("X-Trace-Id"); traceID != "" {
 		parent = sdkLog.NewTraceIDContext(parent, traceID)
 	} else {
