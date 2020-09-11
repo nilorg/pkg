@@ -1,4 +1,4 @@
-package logger
+package hooks
 
 import (
 	"context"
@@ -7,17 +7,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// RedisHook ...
-type RedisHook struct {
+// RedisLogrusHook ...
+type RedisLogrusHook struct {
 	Channel   string
 	redis     *redis.Client
 	formatter logrus.Formatter
 	LogLevels []logrus.Level
 }
 
-// NewRedisHook ...
-func NewRedisHook(redis *redis.Client, formatter logrus.Formatter, channel string) logrus.Hook {
-	return &RedisHook{
+// NewRedisLogrusHook ...
+func NewRedisLogrusHook(redis *redis.Client, formatter logrus.Formatter, channel string) logrus.Hook {
+	return &RedisLogrusHook{
 		redis:     redis,
 		formatter: formatter,
 		Channel:   channel,
@@ -26,7 +26,7 @@ func NewRedisHook(redis *redis.Client, formatter logrus.Formatter, channel strin
 }
 
 // Fire ...
-func (h *RedisHook) Fire(e *logrus.Entry) error {
+func (h *RedisLogrusHook) Fire(e *logrus.Entry) error {
 	dataBytes, err := h.formatter.Format(e)
 	if err != nil {
 		return err
@@ -39,6 +39,6 @@ func (h *RedisHook) Fire(e *logrus.Entry) error {
 }
 
 // Levels returns all logrus levels.
-func (h *RedisHook) Levels() []logrus.Level {
+func (h *RedisLogrusHook) Levels() []logrus.Level {
 	return h.LogLevels
 }

@@ -10,13 +10,15 @@ require (
 	github.com/deckarep/golang-set v1.7.1
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0
+	github.com/gin-gonic/gin v1.6.3
 	github.com/go-redis/redis/v8 v8.0.0-beta.9
+	github.com/google/uuid v1.1.2
 	github.com/jinzhu/gorm v1.9.16
 	github.com/minio/minio-go/v6 v6.0.57
 	github.com/nats-io/nats-streaming-server v0.18.0 // indirect
 	github.com/nats-io/nats.go v1.10.0
 	github.com/nats-io/stan.go v0.7.0
-	github.com/nilorg/sdk v0.0.0-20200722051921-d78210c90563
+	github.com/nilorg/sdk v0.0.0-20200911025455-201df70aedc2
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
