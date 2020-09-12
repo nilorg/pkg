@@ -10,15 +10,22 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+const (
+	// XTraceIDKey ...
+	XTraceIDKey = "X-Trace-Id"
+	// XSpanIDKey ...
+	XSpanIDKey = "X-Span-Id"
+)
+
 // WithGinContext ...
 func WithGinContext(ctx *gin.Context) context.Context {
 	parent := ctx.Request.Context()
-	if traceID := ctx.GetHeader("X-Trace-Id"); traceID != "" {
+	if traceID := ctx.GetHeader(XTraceIDKey); traceID != "" {
 		parent = sdkLog.NewTraceIDContext(parent, traceID)
 	} else {
 		parent = sdkLog.NewTraceIDContext(parent, uuid.New().String())
 	}
-	if spanID := ctx.GetHeader("X-Span-Id"); spanID != "" {
+	if spanID := ctx.GetHeader(XSpanIDKey); spanID != "" {
 		spanID = trace.StartSpanID(spanID)
 		parent = sdkLog.NewSpanIDContext(parent, spanID)
 	} else {
@@ -33,10 +40,10 @@ func WithGrpcMetadata(ctx context.Context) context.Context {
 	if !ok {
 		return ctx
 	}
-	if v, ok := md["X-Trace-Id"]; ok && len(v) > 0 {
+	if v := md.Get(XTraceIDKey); len(v) > 0 {
 		ctx = sdkLog.NewTraceIDContext(ctx, v[0])
 	}
-	if v, ok := md["X-Span-Id"]; ok && len(v) > 0 {
+	if v := md.Get(XSpanIDKey); len(v) > 0 {
 		ctx = sdkLog.NewSpanIDContext(ctx, v[0])
 	}
 	return ctx
