@@ -44,7 +44,8 @@ func WithGrpcMetadata(ctx context.Context) context.Context {
 		ctx = sdkLog.NewTraceIDContext(ctx, v[0])
 	}
 	if v := md.Get(XSpanIDKey); len(v) > 0 {
-		ctx = sdkLog.NewSpanIDContext(ctx, v[0])
+		spanID := trace.StartSpanID(v[0])
+		ctx = sdkLog.NewSpanIDContext(ctx, spanID)
 	}
 	return ctx
 }
