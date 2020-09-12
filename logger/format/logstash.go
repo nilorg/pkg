@@ -23,6 +23,7 @@ func copyEntry(e *logrus.Entry, fields logrus.Fields) *logrus.Entry {
 	ne.Message = e.Message
 	ne.Level = e.Level
 	ne.Time = e.Time
+	ne.Caller = e.Caller
 	ne.Data = logrus.Fields{}
 	if e.Context != nil {
 		var (
@@ -87,11 +88,8 @@ func DefaultLogrusLogstashFormatter(fields logrus.Fields) logrus.Formatter {
 	}
 
 	return &LogrusLogstashFormatter{
-		Formatter: &logrus.JSONFormatter{
-			TimestampFormat: "2006-01-02 15:04:05",
-			FieldMap:        logstashFieldMap,
-		},
-		Fields: fields,
+		Formatter: &logrus.JSONFormatter{FieldMap: logstashFieldMap},
+		Fields:    fields,
 	}
 }
 
