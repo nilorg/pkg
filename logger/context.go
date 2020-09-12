@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	sdkLog "github.com/nilorg/sdk/log"
 	"github.com/nilorg/sdk/log/trace"
+	"google.golang.org/grpc/metadata"
 )
 
 // WithGinContext ...
@@ -24,4 +25,19 @@ func WithGinContext(ctx *gin.Context) context.Context {
 		parent = sdkLog.NewSpanIDContext(parent, "0")
 	}
 	return parent
+}
+
+// WithGrpcMetadata 从上下文中
+func WithGrpcMetadata(ctx context.Context) context.Context {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return ctx
+	}
+	if v, ok := md["X-Trace-Id"]; ok && len(v) > 0 {
+		ctx = sdkLog.NewTraceIDContext(ctx, v[0])
+	}
+	if v, ok := md["X-Span-Id"]; ok && len(v) > 0 {
+		ctx = sdkLog.NewSpanIDContext(ctx, v[0])
+	}
+	return ctx
 }
