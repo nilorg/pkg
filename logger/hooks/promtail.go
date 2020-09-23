@@ -16,7 +16,7 @@ type PromtailLogrusHook struct {
 }
 
 // NewPromtailLogrusHook ...
-func NewPromtailLogrusHook(client promtail.Client, formatter logrus.Formatter, channel string) logrus.Hook {
+func NewPromtailLogrusHook(client promtail.Client, formatter logrus.Formatter) logrus.Hook {
 	return &PromtailLogrusHook{
 		Client:    client,
 		formatter: formatter,
@@ -35,12 +35,7 @@ func NewDefaultPromtailLogrusHook(hostURL, namespace string, formatter logrus.Fo
 		SendLevel:          promtail.DEBUG,
 	}
 	client, _ := promtail.NewClientProto(conf)
-
-	return &PromtailLogrusHook{
-		Client:    client,
-		formatter: formatter,
-		LogLevels: logrus.AllLevels,
-	}
+	return NewPromtailLogrusHook(client, formatter)
 }
 
 // Fire ...
