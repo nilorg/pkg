@@ -25,8 +25,8 @@ func NewPromtailLogrusHook(client promtail.Client, formatter logrus.Formatter, c
 }
 
 // NewDefaultPromtailLogrusHook ...
-func NewDefaultPromtailLogrusHook(hostURL, source string, formatter logrus.Formatter) logrus.Hook {
-	labels := fmt.Sprintf(`{source="%s"}`, source)
+func NewDefaultPromtailLogrusHook(hostURL, namespace string, formatter logrus.Formatter) logrus.Hook {
+	labels := fmt.Sprintf(`{namespace="%s"}`, namespace)
 	conf := promtail.ClientConfig{
 		PushURL:            hostURL + "/api/prom/push",
 		Labels:             labels,
