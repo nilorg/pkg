@@ -11,7 +11,7 @@ require (
 	github.com/deckarep/golang-set v1.7.1
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.2
 	github.com/go-redis/redis/v8 v8.1.3
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/google/uuid v1.1.2
