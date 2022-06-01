@@ -3,37 +3,42 @@ module github.com/nilorg/pkg
 go 1.12
 
 require (
+	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/afiskon/promtail-client v0.0.0-20190305142237-506f3f921e9c
-	github.com/aliyun/aliyun-oss-go-sdk v2.1.4+incompatible
+	github.com/aliyun/aliyun-oss-go-sdk v2.2.4+incompatible
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
-	github.com/certifi/gocertifi v0.0.0-20200211180108-c7c1fbc02894 // indirect
-	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
-	github.com/deckarep/golang-set v1.7.1
+	github.com/certifi/gocertifi v0.0.0-20210507211836-431795d63e8d // indirect
+	github.com/deckarep/golang-set v1.8.0
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0
-	github.com/gin-gonic/gin v1.7.2
-	github.com/go-redis/redis/v8 v8.1.3
-	github.com/golang/snappy v0.0.2 // indirect
-	github.com/google/uuid v1.1.2
+	github.com/gin-gonic/gin v1.8.0
+	github.com/go-playground/validator/v10 v10.11.0 // indirect
+	github.com/go-redis/redis/v8 v8.11.5
+	github.com/golang/snappy v0.0.4 // indirect
+	github.com/google/go-cmp v0.5.7 // indirect
+	github.com/google/uuid v1.3.0
 	github.com/jinzhu/gorm v1.9.16
-	github.com/kr/pretty v0.1.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/klauspost/cpuid/v2 v2.0.12 // indirect
+	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/minio-go/v6 v6.0.57
-	github.com/nats-io/nats-streaming-server v0.18.0 // indirect
-	github.com/nats-io/nats.go v1.10.0
-	github.com/nats-io/stan.go v0.7.0
+	github.com/minio/sha256-simd v1.0.0 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/nats-io/nats-streaming-server v0.24.6 // indirect
+	github.com/nats-io/nats.go v1.16.0
+	github.com/nats-io/stan.go v0.10.2
 	github.com/nilorg/sdk v0.0.0-20210429091026-95b6cdc95c84
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
-	github.com/sirupsen/logrus v1.6.0
-	github.com/uber/jaeger-client-go v2.25.0+incompatible
-	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
-	go.uber.org/atomic v1.6.0 // indirect
-	golang.org/x/mod v0.3.1-0.20200828183125-ce943fd02449 // indirect
-	golang.org/x/sys v0.0.0-20200615200032-f1bc736245b1 // indirect
-	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
-	golang.org/x/tools v0.0.0-20200207183749-b753a1ba74fa // indirect
-	google.golang.org/grpc v1.32.0
-	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
-	gorm.io/gorm v1.20.1
+	github.com/sirupsen/logrus v1.8.1
+	github.com/uber/jaeger-client-go v2.30.0+incompatible
+	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
+	go.uber.org/atomic v1.9.0 // indirect
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
+	golang.org/x/net v0.0.0-20220531201128-c960675eff93 // indirect
+	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
+	google.golang.org/grpc v1.47.0
+	gopkg.in/ini.v1 v1.66.6 // indirect
+	gorm.io/gorm v1.23.5
 )
