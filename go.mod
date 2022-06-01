@@ -40,5 +40,6 @@ require (
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
 	google.golang.org/grpc v1.47.0
 	gopkg.in/ini.v1 v1.66.6 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/gorm v1.23.5
 )
