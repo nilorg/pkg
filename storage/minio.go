@@ -30,7 +30,7 @@ func NewMinioStorage(minioClient *minio.Client, location string, initBucket bool
 		location:                    location,
 		bucketNames:                 bucketNames,
 		minioClient:                 minioClient,
-		CheckAndCreateBucketEnabled: true,
+		CheckAndCreateBucketEnabled: false,
 	}
 	if initBucket {
 		err = ms.initBucket()

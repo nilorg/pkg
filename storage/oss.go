@@ -25,7 +25,7 @@ func NewAliyunOssStorage(ossClient *oss.Client, initBucket bool, bucketNames []s
 	os = &AliyunOssStorage{
 		bucketNames:                 bucketNames,
 		ossClient:                   ossClient,
-		CheckAndCreateBucketEnabled: true,
+		CheckAndCreateBucketEnabled: false,
 	}
 	if initBucket {
 		err = os.initBucket()
