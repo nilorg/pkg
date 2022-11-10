@@ -26,7 +26,7 @@ require (
 	github.com/nats-io/nats.go v1.16.0
 	github.com/nats-io/stan.go v0.10.2
 	github.com/nilorg/sdk v0.0.0-20210429091026-95b6cdc95c84
-	github.com/nilorg/sqlxplus v0.0.0-20220511034521-6e35a2817295
+	github.com/nilorg/sqlxplus v0.0.0-20221110090444-5c6a5170d069
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/satori/go.uuid v1.2.0 // indirect

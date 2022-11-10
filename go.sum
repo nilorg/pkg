@@ -443,8 +443,8 @@ github.com/nats-io/stan.go v0.10.2/go.mod h1:vo2ax8K2IxaR3JtEMLZRFKIdoK/3o1/PKue
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nilorg/sdk v0.0.0-20210429091026-95b6cdc95c84 h1:Nxk1uViXfb9MHgtHBlQFWzlQCsJbDQuotfTsAFcFP3o=
 github.com/nilorg/sdk v0.0.0-20210429091026-95b6cdc95c84/go.mod h1:X1swpPdqguAZaBDoEPyEWHSsJii0YQ1o+3piMv6W3JU=
-github.com/nilorg/sqlxplus v0.0.0-20220511034521-6e35a2817295 h1:laEkJN1T/pnfdgZFQkOquhhN7HFP8hY64yJ6lsf9s5U=
-github.com/nilorg/sqlxplus v0.0.0-20220511034521-6e35a2817295/go.mod h1:Bl9pHegVMD4Ptgw5JkBGeJWBEFr43mBL/QMzAPFcW8Y=
+github.com/nilorg/sqlxplus v0.0.0-20221110090444-5c6a5170d069 h1:Q7natXVTyXgzge1Nual4oKBeKMHMbkmjgjOxhgu6Y7Y=
+github.com/nilorg/sqlxplus v0.0.0-20221110090444-5c6a5170d069/go.mod h1:Bl9pHegVMD4Ptgw5JkBGeJWBEFr43mBL/QMzAPFcW8Y=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
