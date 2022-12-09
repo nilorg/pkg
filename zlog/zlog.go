@@ -38,7 +38,11 @@ func WithConfig(conf zap.Config) Option {
 func Init(opts ...Option) {
 	trace.Init()
 	opt := newOptions(opts...)
-	Standard, _ = opt.Config.Build()
+	var err error
+	Standard, err = opt.Config.Build()
+	if err != nil {
+		panic(err)
+	}
 	Sugared = Standard.Sugar()
 }
 
