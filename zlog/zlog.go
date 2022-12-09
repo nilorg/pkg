@@ -44,9 +44,25 @@ func Init(opts ...Option) {
 
 func InitForViper(conf *viper.Viper) {
 	c := zap.NewDevelopmentConfig()
-	if conf.GetString("zlog.mod") == "production" {
+	production := conf.GetString("zlog.mod") == "production"
+	if production {
 		c = zap.NewProductionConfig()
 	}
+
+	if conf.GetBool("zlog.file.enabled") {
+		path := conf.GetString("zlog.file.path")
+		if path == "" {
+			path = "logs/app.log"
+		}
+		if production {
+			c.OutputPaths = []string{path}
+			c.ErrorOutputPaths = []string{path}
+		} else {
+			c.OutputPaths = append(c.OutputPaths, path)
+			c.ErrorOutputPaths = append(c.ErrorOutputPaths, path)
+		}
+	}
+
 	if conf.GetBool("zlog.zinc.enabled") {
 		RegisterSink()
 		c.OutputPaths = append(c.OutputPaths, conf.GetString("zlog.zinc.url"))
@@ -54,6 +70,7 @@ func InitForViper(conf *viper.Viper) {
 	}
 	Init(WithConfig(c))
 }
+
 func RegisterSink() {
 	// 将ZincSink工厂函数注册到zap中, 自定义协议名为 zinc
 	if err := zap.RegisterSink("zinc", NewZincSink); err != nil {
