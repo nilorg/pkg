@@ -7,6 +7,7 @@ import (
 	"github.com/nilorg/pkg/zlog/trace"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/metadata"
 )
 
 var (
@@ -212,4 +213,30 @@ func WithRequestContext(req *http.Request, userID string) context.Context {
 		parent = NewUserIDContext(parent, userID)
 	}
 	return parent
+}
+
+// WithGrpcMetadata 从上下文中
+func WithGrpcMetadata(ctx context.Context, userID string) context.Context {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return ctx
+	}
+	var traceID string
+	if v := md.Get(XTraceIDKey); len(v) > 0 {
+		traceID = v[0]
+		ctx = NewTraceIDContext(ctx, traceID)
+	} else {
+		traceID = trace.NewID()
+		ctx = NewTraceIDContext(ctx, traceID)
+	}
+	if v := md.Get(XSpanIDKey); len(v) > 0 {
+		spanID := trace.StartSpanID(traceID, v[0])
+		ctx = NewSpanIDContext(ctx, spanID)
+	} else {
+		ctx = NewSpanIDContext(ctx, "0")
+	}
+	if userID != "" {
+		ctx = NewUserIDContext(ctx, userID)
+	}
+	return ctx
 }
