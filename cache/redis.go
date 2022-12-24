@@ -52,6 +52,13 @@ func (r *RedisCache) GetBytes(ctx context.Context, key string) (bytes []byte, er
 	return r.getBytes(ctx, key)
 }
 
+// GetHash ...
+func (r *RedisCache) GetHash(ctx context.Context, key, field string) (value string) {
+	key = r.formatKey(key)
+	value = r.redisClient.HGet(ctx, key, field).String()
+	return
+}
+
 // Set ...
 func (r *RedisCache) Set(ctx context.Context, key string, v interface{}, expiration ...time.Duration) (err error) {
 	var bytes []byte
@@ -74,6 +81,19 @@ func (r *RedisCache) SetString(ctx context.Context, key string, value string, ex
 func (r *RedisCache) SetBytes(ctx context.Context, key string, bytes []byte, expiration ...time.Duration) (err error) {
 	key = r.formatKey(key)
 	return r.setBytes(ctx, key, bytes, expiration...)
+}
+
+// SetHash ...
+func (r *RedisCache) SetHash(ctx context.Context, key string, v map[string]string, expiration ...time.Duration) (err error) {
+	key = r.formatKey(key)
+	err = r.redisClient.HSet(ctx, key, v).Err()
+	if err != nil {
+		return
+	}
+	if len(expiration) > 0 {
+		err = r.redisClient.Expire(ctx, key, expiration[0]).Err()
+	}
+	return
 }
 
 // Remove ...
@@ -120,4 +140,31 @@ func (r *RedisCache) removeMatch(ctx context.Context, match string) (err error) 
 
 func (r *RedisCache) formatKey(key string) string {
 	return r.Prefix + key
+}
+
+func (r *RedisCache) PushRangeKey(ctx context.Context, setKey string, keys ...string) (err error) {
+	setKey = r.formatKey(setKey)
+	kl := len(keys)
+	if kl == 0 {
+		return
+	}
+	members := make([]interface{}, kl)
+	for i := 0; i < kl; i++ {
+		members[i] = keys[i]
+	}
+	err = r.redisClient.SAdd(ctx, setKey, members...).Err()
+	return
+}
+
+func (r *RedisCache) DelRangeKey(ctx context.Context, setKey string) (err error) {
+	setKey = r.formatKey(setKey)
+	var keys []string
+	if keys, err = r.redisClient.SMembers(ctx, setKey).Result(); err != nil {
+		return
+	}
+	if len(keys) == 0 {
+		return
+	}
+	err = r.redisClient.Del(ctx, keys...).Err()
+	return
 }
