@@ -222,14 +222,14 @@ func WithGrpcMetadata(ctx context.Context, userID string) context.Context {
 		return ctx
 	}
 	var traceID string
-	if v := md.Get(XTraceIDKey); len(v) > 0 {
+	if v := md.Get(TraceIDKey); len(v) > 0 {
 		traceID = v[0]
 		ctx = NewTraceIDContext(ctx, traceID)
 	} else {
 		traceID = trace.NewID()
 		ctx = NewTraceIDContext(ctx, traceID)
 	}
-	if v := md.Get(XSpanIDKey); len(v) > 0 {
+	if v := md.Get(SpanIDKey); len(v) > 0 {
 		spanID := trace.StartSpanID(traceID, v[0])
 		ctx = NewSpanIDContext(ctx, spanID)
 	} else {
