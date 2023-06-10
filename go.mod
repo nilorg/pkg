@@ -16,8 +16,8 @@ require (
 	github.com/minio/minio-go/v6 v6.0.57
 	github.com/nats-io/nats.go v1.16.0
 	github.com/nats-io/stan.go v0.10.2
-	github.com/nilorg/sdk v0.0.0-20210429091026-95b6cdc95c84
-	github.com/nilorg/sqlxplus v0.0.0-20221110090444-5c6a5170d069
+	github.com/nilorg/sdk v0.0.0-20230418035736-8bd62607dfd8
+	github.com/nilorg/sqlxplus v0.0.0-20230209150859-97f52fa9b2fa
 	github.com/nilorg/sync v0.0.0-20220920024149-68bec54aeb3a
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible

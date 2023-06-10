@@ -316,10 +316,10 @@ github.com/nats-io/nuid v1.0.1/go.mod h1:19wcPz3Ph3q0Jbyiqsd0kePYG7A95tJPxeL+1OS
 github.com/nats-io/stan.go v0.10.2 h1:gQLd05LhzmhFkHm3/qP/klYHfM/hys45GyHa1Uly/kI=
 github.com/nats-io/stan.go v0.10.2/go.mod h1:vo2ax8K2IxaR3JtEMLZRFKIdoK/3o1/PKueapB7ezX0=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
-github.com/nilorg/sdk v0.0.0-20210429091026-95b6cdc95c84 h1:Nxk1uViXfb9MHgtHBlQFWzlQCsJbDQuotfTsAFcFP3o=
-github.com/nilorg/sdk v0.0.0-20210429091026-95b6cdc95c84/go.mod h1:X1swpPdqguAZaBDoEPyEWHSsJii0YQ1o+3piMv6W3JU=
-github.com/nilorg/sqlxplus v0.0.0-20221110090444-5c6a5170d069 h1:Q7natXVTyXgzge1Nual4oKBeKMHMbkmjgjOxhgu6Y7Y=
-github.com/nilorg/sqlxplus v0.0.0-20221110090444-5c6a5170d069/go.mod h1:Bl9pHegVMD4Ptgw5JkBGeJWBEFr43mBL/QMzAPFcW8Y=
+github.com/nilorg/sdk v0.0.0-20230418035736-8bd62607dfd8 h1:wX29EPNhFYoCOR9O+9Wx0lUVkd0YaxLfqwtjMr4J9xc=
+github.com/nilorg/sdk v0.0.0-20230418035736-8bd62607dfd8/go.mod h1:X1swpPdqguAZaBDoEPyEWHSsJii0YQ1o+3piMv6W3JU=
+github.com/nilorg/sqlxplus v0.0.0-20230209150859-97f52fa9b2fa h1:Ergn4mBJTAiCkNgm4DXWOa4i+mBlsnDxCnpJZrszr0w=
+github.com/nilorg/sqlxplus v0.0.0-20230209150859-97f52fa9b2fa/go.mod h1:Bl9pHegVMD4Ptgw5JkBGeJWBEFr43mBL/QMzAPFcW8Y=
 github.com/nilorg/sync v0.0.0-20220920024149-68bec54aeb3a h1:kf/slDHkS/f7mbzau85uar7JIl8MzsIjRUNmPHSUvC8=
 github.com/nilorg/sync v0.0.0-20220920024149-68bec54aeb3a/go.mod h1:07KM42fiRV+Lvysvmdt+LSXi+oVGgYU2kwU3nXZC/Jw=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
