@@ -37,7 +37,6 @@ func WithConfig(conf zap.Config) Option {
 }
 
 func Init(opts ...Option) {
-	trace.Init()
 	opt := newOptions(opts...)
 	var err error
 	Standard, err = opt.Config.Build()
