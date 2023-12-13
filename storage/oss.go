@@ -13,6 +13,8 @@ import (
 	"github.com/nilorg/sdk/storage"
 )
 
+var _ storage.Storager = (*AliyunOssStorage)(nil)
+
 // AliyunOssStorage 阿里云oss存储
 type AliyunOssStorage struct {
 	bucketNames                 []string
@@ -178,5 +180,21 @@ func (ds *AliyunOssStorage) Remove(ctx context.Context, filename string) (err er
 		return
 	}
 	err = bucket.DeleteObject(bucketName)
+	return
+}
+
+// Exist 判断文件是否存在
+func (ds *AliyunOssStorage) Exist(ctx context.Context, filename string) (exist bool, err error) {
+	bucketName, bucketNameOk := FromBucketNameContext(ctx)
+	if !bucketNameOk {
+		err = ErrBucketNameNotIsNil
+		return
+	}
+	var bucket *oss.Bucket
+	bucket, err = ds.ossClient.Bucket(bucketName)
+	if err != nil {
+		return
+	}
+	exist, err = bucket.IsObjectExist(filename)
 	return
 }

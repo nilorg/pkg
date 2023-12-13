@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/afiskon/promtail-client v0.0.0-20190305142237-506f3f921e9c
-	github.com/aliyun/aliyun-oss-go-sdk v2.2.4+incompatible
+	github.com/aliyun/aliyun-oss-go-sdk v3.0.1+incompatible
 	github.com/deckarep/golang-set v1.8.0
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0
@@ -16,7 +16,7 @@ require (
 	github.com/minio/minio-go/v6 v6.0.57
 	github.com/nats-io/nats.go v1.16.0
 	github.com/nats-io/stan.go v0.10.2
-	github.com/nilorg/sdk v0.0.0-20230418035736-8bd62607dfd8
+	github.com/nilorg/sdk v0.0.0-20231213035036-8725c39df5a6
 	github.com/nilorg/sqlxplus v0.0.0-20230209150859-97f52fa9b2fa
 	github.com/nilorg/sync v0.0.0-20220920024149-68bec54aeb3a
 	github.com/opentracing/opentracing-go v1.2.0
@@ -32,7 +32,6 @@ require (
 
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
-	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/certifi/gocertifi v0.0.0-20210507211836-431795d63e8d // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -73,7 +72,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

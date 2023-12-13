@@ -16,6 +16,8 @@ var (
 	ErrBucketNameNotIsNil = errors.New("BucketName not is nil")
 )
 
+var _ storage.Storager = (*MinioStorage)(nil)
+
 // MinioStorage minio存储
 type MinioStorage struct {
 	location                    string
@@ -165,6 +167,24 @@ func (ds *MinioStorage) Remove(ctx context.Context, filename string) (err error)
 		return
 	}
 	err = ds.minioClient.RemoveObject(bucketName, filename)
+	return
+}
+
+// Exist 是否存在
+func (ds *MinioStorage) Exist(ctx context.Context, filename string) (exist bool, err error) {
+	bucketName, bucketNameOk := FromBucketNameContext(ctx)
+	if !bucketNameOk {
+		err = ErrBucketNameNotIsNil
+		return
+	}
+	_, err = ds.minioClient.StatObjectWithContext(ctx, bucketName, filename, minio.StatObjectOptions{})
+	if err != nil {
+		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+			err = nil
+		}
+		return
+	}
+	exist = true
 	return
 }
 
