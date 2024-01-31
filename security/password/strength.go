@@ -1,7 +1,13 @@
 package password
 
 import (
+	"bytes"
+	"math/rand"
+	"strconv"
+	"time"
 	"unicode"
+
+	"github.com/nilorg/sdk/random"
 )
 
 type PasswordStrength int // 密码强度级别
@@ -68,4 +74,66 @@ func EvaluatePasswordStrength(password string) PasswordStrength {
 	}
 
 	return strength
+}
+
+// RandomPassword 随机生成密码
+func RandomPassword(strength PasswordStrength) string {
+	// 根据密码强度级别生成密码
+	switch strength {
+	case VeryWeak:
+		return random.Number(6)
+	case Weak:
+		return random.Number(8)
+	case Medium:
+		return randomaz(4) + randomNumber(4)
+	case Strong:
+		return randomaz(4) + randomNumber(4) + randomAZ(4)
+	case VeryStrong:
+		return randomaz(4) + randomNumber(4) + randomAZ(4) + randomSpecificSymbol(4)
+	default:
+		return ""
+	}
+}
+
+// randomNumber 随机数字
+func randomNumber(length int) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	var buffer bytes.Buffer
+	for i := 0; i < length; i++ {
+		buffer.WriteString(strconv.Itoa(r.Intn(10)))
+	}
+	return buffer.String()
+}
+
+// randomaz 随机a-z字符串
+func randomaz(l int) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	strs := []byte("abcdefghijklmnopqrstuvwxyz")
+	var buffer bytes.Buffer
+	for i := 0; i < l; i++ {
+		buffer.WriteByte(strs[r.Intn(len(strs))])
+	}
+	return buffer.String()
+}
+
+// randomAZ 随机A-Z字符串
+func randomAZ(l int) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	strs := []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	var buffer bytes.Buffer
+	for i := 0; i < l; i++ {
+		buffer.WriteByte(strs[r.Intn(len(strs))])
+	}
+	return buffer.String()
+}
+
+// randomSpecificSymbol 随机特殊字符
+func randomSpecificSymbol(l int) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	strs := []byte("!@#%&*?")
+	var buffer bytes.Buffer
+	for i := 0; i < l; i++ {
+		buffer.WriteByte(strs[r.Intn(len(strs))])
+	}
+	return buffer.String()
 }
