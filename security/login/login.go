@@ -60,19 +60,18 @@ func (a *Login) IsLocked(ctx context.Context) (locked bool, err error) {
 
 // TryLock 尝试锁定
 func (a *Login) TryLock(ctx context.Context) (locked bool, remainingCount int, err error) {
-	err = a.redisClient.Incr(ctx, a.countKey()).Err()
+	var count int64
+	count, err = a.redisClient.Incr(ctx, a.countKey()).Result()
 	if err != nil {
 		return
 	}
-	var count int
-	count, err = a.redisClient.Get(ctx, a.countKey()).Int()
-	if err != nil {
-		if errors.Is(err, redis.Nil) {
-			err = nil
+	if count == 1 {
+		err = a.redisClient.Expire(ctx, a.countKey(), 24*time.Hour).Err()
+		if err != nil {
+			return
 		}
-		return
 	}
-	remainingCount = a.maxErrCount - count
+	remainingCount = a.maxErrCount - int(count)
 	if remainingCount <= 0 {
 		err = a.redisClient.Set(ctx, a.lockKey(), lock, 24*time.Hour).Err()
 		if err != nil {
