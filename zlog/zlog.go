@@ -30,12 +30,23 @@ func newOptions(opts ...Option) Options {
 	return o
 }
 
+// WithConfig 配置选项
 func WithConfig(conf zap.Config) Option {
 	return func(o *Options) {
 		o.Config = conf
 	}
 }
 
+// InitWithLogger 使用外部传入的 *zap.Logger 初始化
+func InitWithLogger(logger *zap.Logger) {
+	if logger == nil {
+		panic("logger cannot be nil")
+	}
+	Standard = logger
+	Sugared = Standard.Sugar()
+}
+
+// Init 初始化
 func Init(opts ...Option) {
 	opt := newOptions(opts...)
 	var err error
