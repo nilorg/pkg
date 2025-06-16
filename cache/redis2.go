@@ -72,18 +72,28 @@ func (r *RedisCache2) Task(ctx context.Context, key string, v interface{}, query
 		if err = mtx.Lock(); err != nil {
 			return
 		}
-		if err = query(v); err != nil {
-			_ = mtx.Unlock()
-			return
+		defer mtx.Unlock() // 使用defer确保锁被释放
+
+		// 再次检查缓存，避免重复查询
+		if err = r.Get(ctx, key, v); err == nil {
+			return nil // 缓存已存在，直接返回
 		}
-		if err = mtx.Unlock(); err != nil {
-			return
+		if !r.IsNotFound(err) {
+			return err // 其他错误，直接返回
+		}
+
+		// 执行查询
+		if err = query(v); err != nil {
+			return err
+		}
+
+		// 设置缓存
+		if err = r.Set(ctx, key, v, expiry...); err != nil {
+			return err
 		}
 	}
-	err = r.Set(ctx, key, v, expiry...)
-	return
+	return nil
 }
-
 func (r *RedisCache2) Set(ctx context.Context, key string, v interface{}, expiry ...time.Duration) (err error) {
 	var bytes []byte
 	bytes, err = r.opts.Serializer.Marshal(v)
