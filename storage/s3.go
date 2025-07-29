@@ -137,8 +137,9 @@ func (ds *AwsS3Storage) Download(ctx context.Context, dist io.Writer, filename s
 	defer result.Body.Close()
 
 	// 准备元数据
-	md := storage.Metadata{
-		"Content-Type": *result.ContentType,
+	md := storage.Metadata{}
+	if result.ContentType != nil {
+		md["Content-Type"] = *result.ContentType
 	}
 
 	// 添加用户元数据
@@ -156,9 +157,14 @@ func (ds *AwsS3Storage) Download(ctx context.Context, dist io.Writer, filename s
 		downloadFilename = filepath.Base(filename)
 	}
 
+	var size int64
+	if result.ContentLength != nil {
+		size = *result.ContentLength
+	}
+
 	info = &downloadFileInfo{
 		filename: downloadFilename,
-		size:     *result.ContentLength,
+		size:     size,
 		metadata: md,
 	}
 
