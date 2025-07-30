@@ -115,7 +115,22 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 		err = ErrBucketNameNotIsNil
 		return
 	}
-	object, err = ds.minioClient.GetObjectWithContext(ctx, bucketName, filename, minio.GetObjectOptions{})
+
+	// 准备GetObject选项
+	options := minio.GetObjectOptions{}
+
+	// 检查是否有Range请求
+	if rangeReq, hasRange := storage.FromRangeRequestContext(ctx); hasRange {
+		if rangeReq.IsToEnd() {
+			// 从Start到文件末尾，设置起始偏移和长度为0表示到末尾
+			options.SetRange(rangeReq.Start, 0)
+		} else {
+			// 指定范围
+			options.SetRange(rangeReq.Start, rangeReq.End)
+		}
+	}
+
+	object, err = ds.minioClient.GetObjectWithContext(ctx, bucketName, filename, options)
 	if err != nil {
 		return
 	}

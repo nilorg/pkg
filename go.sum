@@ -233,6 +233,8 @@ github.com/nats-io/stan.go v0.10.4/go.mod h1:3XJXH8GagrGqajoO/9+HgPyKV5MWsv7S5cc
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nilorg/sdk v0.0.0-20231213035036-8725c39df5a6 h1:n+IqsuKk7CvrGOqL/GHvwBukoxN9NTqnlhLWznHKyOk=
 github.com/nilorg/sdk v0.0.0-20231213035036-8725c39df5a6/go.mod h1:X1swpPdqguAZaBDoEPyEWHSsJii0YQ1o+3piMv6W3JU=
+github.com/nilorg/sdk v0.0.0-20250730020658-9e8532d3dc42 h1:/hIb7tiODtsELTpsT2vhhkSDhkddaBGt8xtxndGZqzY=
+github.com/nilorg/sdk v0.0.0-20250730020658-9e8532d3dc42/go.mod h1:X1swpPdqguAZaBDoEPyEWHSsJii0YQ1o+3piMv6W3JU=
 github.com/nilorg/sqlxplus v0.0.0-20240605072413-bcd33b6ae6ad h1:zHNsdMqtJWCkewlN3cWyV5/qqUR0dNUH1QaA3EapaWQ=
 github.com/nilorg/sqlxplus v0.0.0-20240605072413-bcd33b6ae6ad/go.mod h1:hMy2FL5jmm3RXha7f7c93rIVE/f40G8GXY47r04QoKw=
 github.com/nilorg/sync v0.0.0-20220920024149-68bec54aeb3a h1:kf/slDHkS/f7mbzau85uar7JIl8MzsIjRUNmPHSUvC8=

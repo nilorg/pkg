@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"path/filepath"
 
@@ -126,11 +127,27 @@ func (ds *AwsS3Storage) Download(ctx context.Context, dist io.Writer, filename s
 		return
 	}
 
-	// 获取对象
-	result, err := ds.s3Client.GetObjectWithContext(ctx, &s3.GetObjectInput{
+	// 准备GetObject输入参数
+	input := &s3.GetObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(filename),
-	})
+	}
+
+	// 检查是否有Range请求
+	if rangeReq, hasRange := storage.FromRangeRequestContext(ctx); hasRange {
+		var rangeStr string
+		if rangeReq.IsToEnd() {
+			// 从Start到文件末尾
+			rangeStr = fmt.Sprintf("bytes=%d-", rangeReq.Start)
+		} else {
+			// 指定范围
+			rangeStr = fmt.Sprintf("bytes=%d-%d", rangeReq.Start, rangeReq.End)
+		}
+		input.Range = aws.String(rangeStr)
+	}
+
+	// 获取对象
+	result, err := ds.s3Client.GetObjectWithContext(ctx, input)
 	if err != nil {
 		return
 	}
@@ -140,6 +157,14 @@ func (ds *AwsS3Storage) Download(ctx context.Context, dist io.Writer, filename s
 	md := storage.Metadata{}
 	if result.ContentType != nil {
 		md["Content-Type"] = *result.ContentType
+	}
+
+	// 添加Range相关的响应头信息
+	if result.ContentRange != nil {
+		md["Content-Range"] = *result.ContentRange
+	}
+	if result.AcceptRanges != nil {
+		md["Accept-Ranges"] = *result.AcceptRanges
 	}
 
 	// 添加用户元数据

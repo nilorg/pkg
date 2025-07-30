@@ -125,21 +125,33 @@ func (ds *AliyunOssStorage) Download(ctx context.Context, dist io.Writer, filena
 	if err != nil {
 		return
 	}
+
+	// 准备下载选项
+	var options []oss.Option
+
+	// 检查是否有Range请求
+	if rangeReq, hasRange := storage.FromRangeRequestContext(ctx); hasRange {
+		options = append(options, oss.Range(rangeReq.Start, rangeReq.End))
+	}
+
 	var object io.ReadCloser
-	object, err = bucket.GetObject(filename)
+	object, err = bucket.GetObject(filename, options...)
 	if err != nil {
 		return
 	}
 	defer object.Close()
+
 	var meta http.Header
 	meta, err = bucket.GetObjectMeta(filename)
 	if err != nil {
 		return
 	}
+
 	md := storage.Metadata{}
 	for k, v := range meta {
 		md.Set(k, v[0])
 	}
+
 	var (
 		downloadFilename      string
 		downloadFilenameExist bool
