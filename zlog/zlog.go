@@ -102,6 +102,7 @@ type (
 	ContextTraceIDKey struct{}
 	ContextSpanIDKey  struct{}
 	ContextUserIDKey  struct{}
+	ContextFieldsKey  struct{}
 )
 
 const (
@@ -124,6 +125,12 @@ func With(ctx context.Context) *zap.Logger {
 	if userID, ok := FromUserIDContext(ctx); ok {
 		fields = append(fields, zap.String(UserIDKey, userID))
 	}
+	// 添加自定义 fields
+	if customFields, ok := FromFieldsContext(ctx); ok {
+		for k, v := range customFields {
+			fields = append(fields, zap.Any(k, v))
+		}
+	}
 	if len(fields) > 0 {
 		return Standard.With(fields...)
 	} else {
@@ -141,6 +148,12 @@ func WithSugared(ctx context.Context) *zap.SugaredLogger {
 	}
 	if userID, ok := FromUserIDContext(ctx); ok {
 		fields = append(fields, UserIDKey, userID)
+	}
+	// 添加自定义 fields
+	if customFields, ok := FromFieldsContext(ctx); ok {
+		for k, v := range customFields {
+			fields = append(fields, k, v)
+		}
 	}
 	if len(fields) > 0 {
 		return Sugared.With(fields...)
@@ -182,6 +195,17 @@ func FromUserIDContext(ctx context.Context) (userID string, ok bool) {
 	return
 }
 
+// NewFieldsContext ...
+func NewFieldsContext(ctx context.Context, fields map[string]interface{}) context.Context {
+	return context.WithValue(ctx, ContextFieldsKey{}, fields)
+}
+
+// FromFieldsContext ...
+func FromFieldsContext(ctx context.Context) (fields map[string]interface{}, ok bool) {
+	fields, ok = ctx.Value(ContextFieldsKey{}).(map[string]interface{})
+	return
+}
+
 // CopyContext copy context
 func CopyContext(ctx context.Context) context.Context {
 	parent := context.Background()
@@ -193,6 +217,9 @@ func CopyContext(ctx context.Context) context.Context {
 	}
 	if userID, ok := FromUserIDContext(ctx); ok {
 		parent = NewUserIDContext(parent, userID)
+	}
+	if fields, ok := FromFieldsContext(ctx); ok {
+		parent = NewFieldsContext(parent, fields)
 	}
 	return parent
 }
