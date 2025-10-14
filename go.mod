@@ -19,7 +19,7 @@ require (
 	github.com/nats-io/stan.go v0.10.4
 	github.com/nilorg/sdk v0.0.0-20250730020658-9e8532d3dc42
 	github.com/nilorg/sqlxplus v0.0.0-20240605072413-bcd33b6ae6ad
-	github.com/nilorg/sync v0.0.0-20220920024149-68bec54aeb3a
+	github.com/nilorg/sync v0.0.0-20250803060606-9bf41cfd83fa
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/sirupsen/logrus v1.8.1

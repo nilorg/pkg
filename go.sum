@@ -237,6 +237,8 @@ github.com/nilorg/sqlxplus v0.0.0-20240605072413-bcd33b6ae6ad h1:zHNsdMqtJWCkewl
 github.com/nilorg/sqlxplus v0.0.0-20240605072413-bcd33b6ae6ad/go.mod h1:hMy2FL5jmm3RXha7f7c93rIVE/f40G8GXY47r04QoKw=
 github.com/nilorg/sync v0.0.0-20220920024149-68bec54aeb3a h1:kf/slDHkS/f7mbzau85uar7JIl8MzsIjRUNmPHSUvC8=
 github.com/nilorg/sync v0.0.0-20220920024149-68bec54aeb3a/go.mod h1:07KM42fiRV+Lvysvmdt+LSXi+oVGgYU2kwU3nXZC/Jw=
+github.com/nilorg/sync v0.0.0-20250803060606-9bf41cfd83fa h1:bQWkO7iNoxElDRQd4U7xucaswvRlX3cLWlRIKcJ7Y4E=
+github.com/nilorg/sync v0.0.0-20250803060606-9bf41cfd83fa/go.mod h1:07KM42fiRV+Lvysvmdt+LSXi+oVGgYU2kwU3nXZC/Jw=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=

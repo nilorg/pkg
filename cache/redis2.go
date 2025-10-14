@@ -69,7 +69,7 @@ func (r *RedisCache2) Task(ctx context.Context, key string, v interface{}, query
 			fmt.Sprintf("%s:%s", key, "lock"),
 			sync.KeyPrefix(r.opts.Prefix),
 		)
-		if err = mtx.Lock(); err != nil {
+		if err = mtx.LockWait(ctx); err != nil {
 			return
 		}
 		defer mtx.Unlock() // 使用defer确保锁被释放
