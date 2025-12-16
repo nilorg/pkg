@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"path/filepath"
 
@@ -122,8 +123,8 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 	// 检查是否有Range请求
 	if rangeReq, hasRange := storage.FromRangeRequestContext(ctx); hasRange {
 		if rangeReq.IsToEnd() {
-			// 从Start到文件末尾，设置起始偏移和长度为0表示到末尾
-			options.SetRange(rangeReq.Start, 0)
+			// 从Start到文件末尾
+			options.Set("Range", fmt.Sprintf("bytes=%d-", rangeReq.Start))
 		} else {
 			// 指定范围
 			options.SetRange(rangeReq.Start, rangeReq.End)
@@ -156,9 +157,27 @@ func (ds *MinioStorage) Download(ctx context.Context, dist io.Writer, filename s
 		downloadFilename = filepath.Base(filename)
 	}
 
+	size := objectInfo.Size
+	if rangeReq, hasRange := storage.FromRangeRequestContext(ctx); hasRange {
+		if rangeReq.Start < size {
+			if rangeReq.IsToEnd() {
+				size = size - rangeReq.Start
+			} else {
+				length := rangeReq.Length()
+				if rangeReq.Start+length > size {
+					size = size - rangeReq.Start
+				} else {
+					size = length
+				}
+			}
+		} else {
+			size = 0
+		}
+	}
+
 	info = &downloadFileInfo{
 		filename: downloadFilename,
-		size:     objectInfo.Size,
+		size:     size,
 		metadata: md,
 	}
 

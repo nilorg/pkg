@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/afiskon/promtail-client v0.0.0-20190305142237-506f3f921e9c
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
-	github.com/aws/aws-sdk-go v1.55.7
+	github.com/aws/aws-sdk-go v1.55.8
 	github.com/deckarep/golang-set v1.8.0
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0
@@ -17,7 +17,7 @@ require (
 	github.com/minio/minio-go/v6 v6.0.57
 	github.com/nats-io/nats.go v1.42.0
 	github.com/nats-io/stan.go v0.10.4
-	github.com/nilorg/sdk v0.0.0-20250730020658-9e8532d3dc42
+	github.com/nilorg/sdk v0.0.0-20251216121711-27713f2bd609
 	github.com/nilorg/sqlxplus v0.0.0-20240605072413-bcd33b6ae6ad
 	github.com/nilorg/sync v0.0.0-20250803060606-9bf41cfd83fa
 	github.com/opentracing/opentracing-go v1.2.0

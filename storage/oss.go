@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"path/filepath"
@@ -131,7 +132,11 @@ func (ds *AliyunOssStorage) Download(ctx context.Context, dist io.Writer, filena
 
 	// 检查是否有Range请求
 	if rangeReq, hasRange := storage.FromRangeRequestContext(ctx); hasRange {
-		options = append(options, oss.Range(rangeReq.Start, rangeReq.End))
+		if rangeReq.IsToEnd() {
+			options = append(options, oss.NormalizedRange(fmt.Sprintf("bytes=%d-", rangeReq.Start)))
+		} else {
+			options = append(options, oss.Range(rangeReq.Start, rangeReq.End))
+		}
 	}
 
 	var object io.ReadCloser
@@ -163,6 +168,24 @@ func (ds *AliyunOssStorage) Download(ctx context.Context, dist io.Writer, filena
 	if length := md.Get(oss.HTTPHeaderContentLength); length != "" {
 		size = convert.ToInt64(length)
 	}
+
+	if rangeReq, hasRange := storage.FromRangeRequestContext(ctx); hasRange {
+		if rangeReq.Start < size {
+			if rangeReq.IsToEnd() {
+				size = size - rangeReq.Start
+			} else {
+				length := rangeReq.Length()
+				if rangeReq.Start+length > size {
+					size = size - rangeReq.Start
+				} else {
+					size = length
+				}
+			}
+		} else {
+			size = 0
+		}
+	}
+
 	info = &downloadFileInfo{
 		filename: downloadFilename,
 		size:     size,
@@ -191,7 +214,7 @@ func (ds *AliyunOssStorage) Remove(ctx context.Context, filename string) (err er
 	if err != nil {
 		return
 	}
-	err = bucket.DeleteObject(bucketName)
+	err = bucket.DeleteObject(filename)
 	return
 }
 
