@@ -20,17 +20,44 @@ const (
 )
 
 type Login struct {
-	userID      string
-	redisClient *redis.Client
-	maxErrCount int
+	userID       string
+	redisClient  *redis.Client
+	maxErrCount  int
+	lockDuration time.Duration
 }
 
-func New(userID string, redisClient *redis.Client) *Login {
-	return &Login{
-		userID:      userID,
-		redisClient: redisClient,
-		maxErrCount: 5,
+// Option 配置选项函数类型
+type Option func(*Login)
+
+// WithMaxErrCount 设置最大错误次数
+func WithMaxErrCount(count int) Option {
+	return func(l *Login) {
+		if count > 0 {
+			l.maxErrCount = count
+		}
 	}
+}
+
+// WithLockDuration 设置锁定时长
+func WithLockDuration(duration time.Duration) Option {
+	return func(l *Login) {
+		if duration > 0 {
+			l.lockDuration = duration
+		}
+	}
+}
+
+func New(userID string, redisClient *redis.Client, opts ...Option) *Login {
+	l := &Login{
+		userID:       userID,
+		redisClient:  redisClient,
+		maxErrCount:  5,
+		lockDuration: 24 * time.Hour,
+	}
+	for _, opt := range opts {
+		opt(l)
+	}
+	return l
 }
 
 func (a *Login) lockKey() string {
@@ -60,20 +87,27 @@ func (a *Login) IsLocked(ctx context.Context) (locked bool, err error) {
 
 // TryLock 尝试锁定
 func (a *Login) TryLock(ctx context.Context) (locked bool, remainingCount int, err error) {
+	// 先检查是否已锁定
+	locked, err = a.IsLocked(ctx)
+	if err != nil || locked {
+		return
+	}
+
 	var count int64
 	count, err = a.redisClient.Incr(ctx, a.countKey()).Result()
 	if err != nil {
 		return
 	}
 	if count == 1 {
-		err = a.redisClient.Expire(ctx, a.countKey(), 24*time.Hour).Err()
+		err = a.redisClient.Expire(ctx, a.countKey(), a.lockDuration).Err()
 		if err != nil {
 			return
 		}
 	}
 	remainingCount = a.maxErrCount - int(count)
 	if remainingCount <= 0 {
-		err = a.redisClient.Set(ctx, a.lockKey(), lock, 24*time.Hour).Err()
+		remainingCount = 0
+		err = a.redisClient.Set(ctx, a.lockKey(), lock, a.lockDuration).Err()
 		if err != nil {
 			return
 		}
@@ -84,18 +118,16 @@ func (a *Login) TryLock(ctx context.Context) (locked bool, remainingCount int, e
 
 // Reset 重置错误次数
 func (a *Login) Reset(ctx context.Context) (err error) {
-	err = a.redisClient.Del(ctx, a.lockKey()).Err()
-	if err != nil {
-		return
-	}
-	err = a.redisClient.Del(ctx, a.countKey()).Err()
-	if err != nil {
-		return
-	}
+	err = a.redisClient.Del(ctx, a.lockKey(), a.countKey()).Err()
 	return
 }
 
 // GetMaxErrCount 获取最大错误次数
 func (a *Login) GetMaxErrCount() int {
 	return a.maxErrCount
+}
+
+// GetLockDuration 获取锁定时长
+func (a *Login) GetLockDuration() time.Duration {
+	return a.lockDuration
 }
