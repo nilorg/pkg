@@ -6,7 +6,7 @@ require (
 	github.com/afiskon/promtail-client v0.0.0-20190305142237-506f3f921e9c
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/aws/aws-sdk-go v1.55.8
-	github.com/deckarep/golang-set v1.8.0
+	github.com/deckarep/golang-set/v3 v3.0.0
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0
 	github.com/gin-gonic/gin v1.10.0

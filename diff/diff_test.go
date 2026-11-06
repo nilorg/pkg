@@ -44,13 +44,16 @@ func TestIntSliceFunctions(t *testing.T) {
 			added, deleted := IntSlice(tt.src, tt.in)
 			assertInts(t, "added", added, tt.added)
 			assertInts(t, "deleted", deleted, tt.deleted)
-			for _, fn := range []func([]int64, []int64) ([]int64, []int64, []int64){IntSliceV2, IntSliceChanges} {
+			genericAdded, genericDeleted := Slice(tt.src, tt.in)
+			assertInts(t, "generic added", genericAdded, tt.added)
+			assertInts(t, "generic deleted", genericDeleted, tt.deleted)
+			for _, fn := range []func([]int64, []int64) ([]int64, []int64, []int64){IntSliceV2, IntSliceChanges, SliceChanges[int64]} {
 				added, deleted, updated := fn(tt.src, tt.in)
 				assertInts(t, "added", added, tt.added)
 				assertInts(t, "deleted", deleted, tt.deleted)
 				assertInts(t, "updated", updated, tt.updated)
 			}
-			for _, fn := range []func([]int64, []int64) ([]int64, []int64){IntSliceV3, IntSliceUpdatedDeleted} {
+			for _, fn := range []func([]int64, []int64) ([]int64, []int64){IntSliceV3, IntSliceUpdatedDeleted, SliceUpdatedDeleted[int64]} {
 				updated, deleted := fn(tt.src, tt.in)
 				assertInts(t, "updated", updated, tt.nonzeroUpdated)
 				assertInts(t, "deleted", deleted, tt.nonzeroDeleted)
@@ -59,6 +62,29 @@ func TestIntSliceFunctions(t *testing.T) {
 				t.Fatal("function modified its input")
 			}
 		})
+	}
+}
+
+func TestGenericSliceChanges(t *testing.T) {
+	type ID uint64
+	added, deleted, updated := SliceChanges([]ID{1, 2, 2}, []ID{2, 3, 3})
+	if !reflect.DeepEqual(added, []ID{3}) || !reflect.DeepEqual(deleted, []ID{1}) || !reflect.DeepEqual(updated, []ID{2}) {
+		t.Fatalf("unexpected changes: %v %v %v", added, deleted, updated)
+	}
+}
+
+func TestGenericEmptyResultsAreNil(t *testing.T) {
+	added, deleted := Slice[int](nil, nil)
+	if added != nil || deleted != nil {
+		t.Fatal("Slice should return nil for empty results")
+	}
+	added, deleted, updated := SliceChanges[int](nil, nil)
+	if added != nil || deleted != nil || updated != nil {
+		t.Fatal("SliceChanges should return nil for empty results")
+	}
+	updated, deleted = SliceUpdatedDeleted([]int{0}, []int{0})
+	if updated != nil || deleted != nil {
+		t.Fatal("SliceUpdatedDeleted should return nil for empty results")
 	}
 }
 
